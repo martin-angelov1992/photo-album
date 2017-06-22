@@ -1,6 +1,5 @@
 package com.martin.photoAlbum;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -21,32 +20,10 @@ import com.sun.jersey.api.core.PackagesResourceConfig;
  */
 public class App 
 {
-    public static void main(String[] args) throws IOException {
-        System.out.println("Starting Crunchify's Embedded Jersey HTTPServer...\n");
-        HttpServer crunchifyHTTPServer = createHttpServer();
-        crunchifyHTTPServer.start();
-        System.out.println(String.format("\nJersey Application Server started with WADL available at " + "%sapplication.wadl\n", getCrunchifyURI()));
-        System.out.println("Started Crunchify's Embedded Jersey HTTPServer Successfully !!!");
-    }
- 
-    private static HttpServer createHttpServer() throws IOException {
-        ResourceConfig crunchifyResourceConfig = new PackagesResourceConfig("com.crunchify.tutorial");
-        // This tutorial required and then enable below line: http://crunchify.me/1VIwInK
-        //crunchifyResourceConfig.getContainerResponseFilters().add(CrunchifyCORSFilter.class);
-        return HttpServerFactory.create(getCrunchifyURI(), crunchifyResourceConfig);
-    }
- 
-    private static URI getCrunchifyURI() {
-        return UriBuilder.fromUri("http://" + crunchifyGetHostName() + "/").port(8085).build();
-    }
- 
-    private static String crunchifyGetHostName() {
-        String hostName = "localhost";
-        try {
-            hostName = InetAddress.getLocalHost().getCanonicalHostName();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        return hostName;
+    public static void main(String[] args) throws Exception {
+        URI baseUri = UriBuilder.fromUri("http://localhost/").port(9998).build();
+        ResourceConfig config = new ResourceConfig(CrunchifyAPI.class);
+        Server server = JettyHttpContainerFactory.createServer(baseUri, config);
+        server.start();
     }
 }
