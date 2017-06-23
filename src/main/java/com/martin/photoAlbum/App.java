@@ -21,8 +21,9 @@ import com.sun.jersey.api.core.PackagesResourceConfig;
 public class App 
 {
     public static void main(String[] args) throws Exception {
+    	RequestHandlers requestHandlers = RequestHandlers.getInstance();
         URI baseUri = UriBuilder.fromUri("http://localhost/").port(9998).build();
-        ResourceConfig config = new ResourceConfig(CrunchifyAPI.class);
+        ResourceConfig config = new ResourceConfig(requestHandlers.getAll());
         Server server = JettyHttpContainerFactory.createServer(baseUri, config);
         server.start();
     }
