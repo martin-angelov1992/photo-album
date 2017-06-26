@@ -5,4 +5,12 @@ import com.martin.photoAlbum.entities.Account;
 public class Session {
 
 	private Account loggedInAcc;
+	
+	public Account getAccount() {
+		return loggedInAcc;
+	}
+	
+	public boolean isLoggedIn() {
+		return loggedInAcc != null;
+	}
 }

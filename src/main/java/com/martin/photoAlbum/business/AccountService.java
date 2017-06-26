@@ -7,10 +7,19 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import com.martin.photoAlbum.Data;
+import com.martin.photoAlbum.Session;
 import com.martin.photoAlbum.entities.Account;
 
 public class AccountService {
 	private static final String VALID_EMAIl_PATTERN = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+	
+	private Session session;
+	private CategoryService categoryService;
+	
+	public AccountService(Session session) {
+		this.session = session;
+		this.categoryService = new CategoryService(session);
+	}
 	
 	public RegisterResult register(String username, String password, String email, String name) {
 		if (!validUsername(username)) {
@@ -30,6 +39,8 @@ public class AccountService {
 		}
 		
 		saveAccount(username, password, email, name);
+		categoryService.add(name);
+		
 		return RegisterResult.OK;
 	}
 	
@@ -75,12 +86,12 @@ public class AccountService {
 		data.getEntityManager().persist(acc);
 	}
 	
-	public boolean login(String username, String password) {
+	public Account login(String username, String password) {
 		String passHash = hash(password);
 		
 		Account account = getAccount(username, passHash);
 		
-		return account != null;
+		return account;
 	}
 	
 	public Account getAccount(String username, String passHash) {
@@ -100,7 +111,35 @@ public class AccountService {
 	}
 	
 	public EditProfileResult editProfile(String password, String email, String name) {
+		if (!session.isLoggedIn()) {
+			return EditProfileResult.NOT_LOGGED_IN;
+		}
 		
+		Account account = session.getAccount();
+		
+		if (!validPassword(password)) {
+			return EditProfileResult.INVALID_PASSWORD;
+		}
+		
+		if (!validEmail(email)) {
+			return EditProfileResult.INVALID_EMAIL;
+		}
+		
+		if (!validName(name)) {
+			return EditProfileResult.INVALID_NAME;
+		}
+		
+		categoryService.renameParentCategory(account.getName(), name);
+		
+		String passHash = hash(password);
+		
+		account.setMail(email);
+		account.setName(name);
+		account.setPassHash(passHash);
+		
+		Data.getInstance().getEntityManager().persist(account);
+		
+		return EditProfileResult.OK;
 	}
 	
 	public String hash(String str) {
@@ -133,6 +172,7 @@ public class AccountService {
 	}
 	
 	public static enum EditProfileResult {
+		NOT_LOGGED_IN, INVALID_PASSWORD, INVALID_EMAIL, INVALID_NAME, OK
 		
 	}
 }
