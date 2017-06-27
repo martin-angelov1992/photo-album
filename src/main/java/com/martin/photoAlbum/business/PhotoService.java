@@ -3,13 +3,24 @@ package com.martin.photoAlbum.business;
 import java.util.Date;
 
 import javax.persistence.EntityManager;
+
+import org.apache.log4j.Logger;
+
 import com.martin.photoAlbum.Data;
 import com.martin.photoAlbum.Session;
 import com.martin.photoAlbum.entities.Account;
 import com.martin.photoAlbum.entities.Category;
 import com.martin.photoAlbum.entities.Photo;
 
+import magick.ImageInfo;
+import magick.MagickException;
+import magick.MagickImage;
+
 public class PhotoService {
+	private final static Logger logger = Logger.getLogger(CategoryService.class);
+	private static final int THUMBNAIL_MAX_WIDTH = 500;
+	private static final int THUMBNAIL_MAX_HEIGHT = 500;
+	
 	public enum DeleteResult {
 		PHOTO_NOT_FOUND, NOT_LOGGED_IN, NOT_OWNER, OK
 
@@ -30,7 +41,7 @@ public class PhotoService {
 		this.session = session;
 	}
 	
-	public AddResult add(int categoryID, String name, String description) {
+	public AddResult add(int categoryID, String name, String description, byte[] photoContent) {
 		if (!session.isLoggedIn()) {
 			return AddResult.NOT_LOGGED_IN;
 		}
@@ -43,10 +54,14 @@ public class PhotoService {
 			return AddResult.CATEGORY_DOES_NOT_EXIST;
 		}
 		
+		byte[] thumbnailBytes = generateThumbnail(photoContent);
+		
 		Photo photo = new Photo();
 		photo.setDateAdded(new Date());
 		photo.setDescription(description);
 		photo.setName(name);
+		photo.setImage(photoContent);
+		photo.setThumbnail(thumbnailBytes);
 		
 		em.persist(photo);
 		
@@ -57,6 +72,35 @@ public class PhotoService {
 		return AddResult.OK;
 	}
 	
+	private byte[] generateThumbnail(byte[] photoContent) {
+		try {
+			MagickImage image = new MagickImage(new ImageInfo(), photoContent);
+			
+			ResizeInfo resizeInfo;
+				resizeInfo = getResizeInfo(image.getDimension().getHeight(), image.getDimension().getWidth());
+			
+			MagickImage thumbnail = image.scaleImage(resizeInfo.maxWidth, resizeInfo.maxHeight);
+			return thumbnail.imageToBlob(new ImageInfo());
+		} catch (MagickException e) {
+			logger.error("Unable to create thumbnail.");
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private ResizeInfo getResizeInfo(double height, double width) {
+		double heightRatio = THUMBNAIL_MAX_WIDTH/height;
+		double widthRatio = THUMBNAIL_MAX_WIDTH/width;
+		
+		double scaleRatio = 
+		return null;
+	}
+
+	public static class ResizeInfo {
+		private int maxWidth;
+		private int maxHeight;
+	}
+
 	public EditResult edit(int id, String name, String description) {
 		if (!session.isLoggedIn()) {
 			return EditResult.NOT_LOGGED_IN;

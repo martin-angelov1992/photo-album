@@ -1,7 +1,49 @@
 <script type="text/javascript">
+	var pages = ["login", "register", "photos", "photo"];
 	$(document).ready(function() {
+		var hash = window.location.hash;
+		var requestInfo = getRequestInfo(hash);
 		
-	})
+		$("#content").html();
+	});
+	
+	function getRequestInfo(hash) {
+		var parts = hash.split("?");
+		
+		var info = {};
+		var page = parts[0];
+		var theRest = "";
+		
+		if (parts.length > 1) {
+			theRest = parts[1];
+		}
+		
+		info['page'] = page;
+		
+		var params = getParams(theRest);
+		
+		for (key in params) {
+			info[key] = params[key];
+		}
+		
+		return info;
+	}
+	
+	function getParams(str) {
+		var params = {};
+		var parts = str.split("&");
+		
+		for (i in parts) {
+			var paramParts = parts[i].split("=");
+			
+			var name = paramParts[0];
+			var value = paramParts[1];
+			
+			params[name] = value;
+		}
+		
+		return params;
+	}
 </script>
 <div id="header"><span id="photos-link"></span> | <span id="profile-nav"></span></div>
 	<div id="content"></div>
