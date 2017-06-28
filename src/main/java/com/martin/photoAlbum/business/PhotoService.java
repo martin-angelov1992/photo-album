@@ -92,13 +92,19 @@ public class PhotoService {
 		double heightRatio = THUMBNAIL_MAX_WIDTH/height;
 		double widthRatio = THUMBNAIL_MAX_WIDTH/width;
 		
-		double scaleRatio = 
-		return null;
+		double scaleRatio = widthRatio < heightRatio ? widthRatio : heightRatio;
+		
+		return new ResizeInfo(scaleRatio*width, scaleRatio*height);
 	}
 
 	public static class ResizeInfo {
-		private int maxWidth;
-		private int maxHeight;
+		private int width;
+		private int height;
+		
+		public ResizeInfo(int width, int height) {
+			this.height = height;
+			this.width = width;
+		}
 	}
 
 	public EditResult edit(int id, String name, String description) {
