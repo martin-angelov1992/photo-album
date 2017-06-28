@@ -23,25 +23,25 @@ public class AccountService {
 	
 	public RegisterResult register(String username, String password, String email, String name) {
 		if (!validUsername(username)) {
-			return RegisterResult.INVALID_USERNAME;
+			return new RegisterResult(RegisterStatus.INVALID_USERNAME);
 		}
 		
 		if (!validPassword(password)) {
-			return RegisterResult.INVALID_PASSWORD;
+			return new RegisterResult(RegisterStatus.INVALID_PASSWORD);
 		}
 		
 		if (!validEmail(email)) {
-			return RegisterResult.INVALID_EMAIL;
+			return new RegisterResult(RegisterStatus.INVALID_EMAIL);
 		}
 		
 		if (!validName(name)) {
-			return RegisterResult.INVALID_NAME;
+			return new RegisterResult(RegisterStatus.INVALID_NAME);
 		}
 		
-		saveAccount(username, password, email, name);
+		Account acc = saveAccount(username, password, email, name);
 		categoryService.add(name);
 		
-		return RegisterResult.OK;
+		return new RegisterResult(RegisterStatus.OK, acc);
 	}
 	
 	private boolean validUsername(String username) {
@@ -76,7 +76,7 @@ public class AccountService {
 		return true;
 	}
 
-	public void saveAccount(String username, String password, String email, String name) {
+	public Account saveAccount(String username, String password, String email, String name) {
 		Data data = Data.getInstance();
 		
 		String passHash = hash(password);
@@ -84,6 +84,9 @@ public class AccountService {
 		Account acc = new Account(username, passHash, email, name);
 		
 		data.getEntityManager().persist(acc);
+		data.getEntityManager().flush();
+		
+		return acc;
 	}
 	
 	public Account login(String username, String password) {
@@ -166,9 +169,30 @@ public class AccountService {
         return sb.toString();
 	}
 	
-	public static enum RegisterResult {
-		INVALID_USERNAME, INVALID_PASSWORD, INVALID_EMAIL, INVALID_NAME, OK
+	public static class RegisterResult {
+		private RegisterStatus status;
+		private Account account;
 		
+		public RegisterResult(RegisterStatus status) {
+			this.status = status;
+		}
+		
+		public RegisterResult(RegisterStatus status, Account account) {
+			this(status);
+			this.account = account;
+		}
+
+		public RegisterStatus getStatus() {
+			return status;
+		}
+
+		public Account getAccount() {
+			return account;
+		}
+	}
+	
+	public static enum RegisterStatus {
+		INVALID_USERNAME, INVALID_PASSWORD, INVALID_EMAIL, INVALID_NAME, OK
 	}
 	
 	public static enum EditProfileResult {

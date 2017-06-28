@@ -4,8 +4,49 @@
 		var hash = window.location.hash;
 		var requestInfo = getRequestInfo(hash);
 		
-		$("#content").html();
+		populateProfileNav();
+		populateContent(requestInfo.page);
 	});
+	
+	function openPage(page) {
+		populateContent(page);
+		runContentScript(page)
+	}
+	
+	function populateContent(page) {
+		$("#content").load(page.".html");
+		runContentScript(page);
+	}
+	
+	function runContentScript(page) {
+		$.getScript("js/".page.".js", function() {
+			  var functionName = "populate".ucfirst(page);
+			  
+			  window[functionName]();
+		});
+	}
+	
+	function ucfirst(string) {
+	    return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+	
+	function populateProfileNav() {
+		$.getJSON( "session", function( sessionInfo ) {
+			if (sessionInfo.loggedIn) {
+				populateLoggedInProfileNav(sessionInfo.account);
+			} else {
+				populateNotLoggedInProfileNav();
+			}
+		});
+	}
+	
+	function populateLoggedInProfileNav(account) {
+		
+	}
+	
+	function populateNotLoggedInProfileNav() {
+		
+	}
 	
 	function getRequestInfo(hash) {
 		var parts = hash.split("?");
@@ -18,7 +59,11 @@
 			theRest = parts[1];
 		}
 		
-		info['page'] = page;
+		if (page != null && page != "") {
+			info['page'] = page;
+		} else {
+			info['page'] = "categories";
+		}
 		
 		var params = getParams(theRest);
 		

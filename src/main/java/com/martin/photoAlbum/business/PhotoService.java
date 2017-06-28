@@ -79,7 +79,7 @@ public class PhotoService {
 			ResizeInfo resizeInfo;
 				resizeInfo = getResizeInfo(image.getDimension().getHeight(), image.getDimension().getWidth());
 			
-			MagickImage thumbnail = image.scaleImage(resizeInfo.maxWidth, resizeInfo.maxHeight);
+			MagickImage thumbnail = image.scaleImage(resizeInfo.width, resizeInfo.height);
 			return thumbnail.imageToBlob(new ImageInfo());
 		} catch (MagickException e) {
 			logger.error("Unable to create thumbnail.");
@@ -94,7 +94,7 @@ public class PhotoService {
 		
 		double scaleRatio = widthRatio < heightRatio ? widthRatio : heightRatio;
 		
-		return new ResizeInfo(scaleRatio*width, scaleRatio*height);
+		return new ResizeInfo((int)Math.floor(scaleRatio*width), (int)Math.floor(scaleRatio*height));
 	}
 
 	public static class ResizeInfo {

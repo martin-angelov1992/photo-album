@@ -1,6 +1,8 @@
 package com.martin.photoAlbum.business;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -10,6 +12,7 @@ import com.martin.photoAlbum.Data;
 import com.martin.photoAlbum.Session;
 import com.martin.photoAlbum.entities.Account;
 import com.martin.photoAlbum.entities.Category;
+import com.martin.photoAlbum.entities.SimpleCategory;
 
 public class CategoryService {
 
@@ -165,7 +168,7 @@ public class CategoryService {
 	public void renameParentCategory(String name, String newName) {
 		EntityManager em = Data.getInstance().getEntityManager();
 		Query q = em.createQuery(
-				"SELECT c FROM Category c WHERE name = :name AND category.parent IS NULL");
+				"SELECT c FROM Category c WHERE name = :name AND c.parent IS NULL");
 		q.setParameter("name", name);
 		
 		Category category = (Category)q.getSingleResult();
@@ -175,6 +178,60 @@ public class CategoryService {
 		em.persist(category);
 	}
 	
+	public List<SimpleCategory> getCategoryTree() {
+		EntityManager em = Data.getInstance().getEntityManager();
+		
+		Query q = em.createQuery(
+				"SELECT c FROM Category c c.parent IS NULL", Category.class);
+		List<Category> categories = q.getResultList();
+		
+		List<SimpleCategory> simpleCategories = convertToSimpleCategories(categories);
+		
+		fillChildren(simpleCategories);
+		
+		return simpleCategories;
+	}
+	
+	private void fillChildren(List<SimpleCategory> simpleCategories) {
+		EntityManager em = Data.getInstance().getEntityManager();
+		
+		for (SimpleCategory simpleCategory : simpleCategories) {
+			Query q = em.createQuery("SELECT c FROM Category c c.parent.id=:parentId", Category.class);
+			q.setParameter("parentId", simpleCategory.getId());
+			
+			List<Category> categories = q.getResultList();
+			
+			if (categories.size() == 0) {
+				continue;
+			}
+			
+			List<SimpleCategory> childCategories = convertToSimpleCategories(categories);
+			
+			simpleCategory.setCategories(childCategories);
+			
+			fillChildren(childCategories);
+		}
+	}
+
+	private List<SimpleCategory> convertToSimpleCategories(List<Category> categories) {
+		List<SimpleCategory> simpleCategories = new ArrayList<>(categories.size());
+
+		for (Category category : categories) {
+			simpleCategories.add(convertToSimpleCategory(category));
+		}
+		
+		return simpleCategories;
+	}
+
+	private SimpleCategory convertToSimpleCategory(Category category) {
+		SimpleCategory simpleCategory = new SimpleCategory();
+		
+		simpleCategory.setId(category.getId());
+		simpleCategory.setName(category.getName());
+		
+		return simpleCategory;
+	}
+
 	public Category getById(int id) {
 		EntityManager em = Data.getInstance().getEntityManager();
 		
