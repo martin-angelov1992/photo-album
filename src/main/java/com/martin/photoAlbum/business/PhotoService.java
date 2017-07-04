@@ -1,8 +1,12 @@
 package com.martin.photoAlbum.business;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 
@@ -10,8 +14,11 @@ import com.martin.photoAlbum.Data;
 import com.martin.photoAlbum.Session;
 import com.martin.photoAlbum.entities.Account;
 import com.martin.photoAlbum.entities.Category;
+import com.martin.photoAlbum.entities.Item;
 import com.martin.photoAlbum.entities.Photo;
 
+import dto.PathDto;
+import dto.PhotoDto;
 import magick.ImageInfo;
 import magick.MagickException;
 import magick.MagickImage;
@@ -89,7 +96,7 @@ public class PhotoService {
 	}
 	
 	private ResizeInfo getResizeInfo(double height, double width) {
-		double heightRatio = THUMBNAIL_MAX_WIDTH/height;
+		double heightRatio = THUMBNAIL_MAX_HEIGHT/height;
 		double widthRatio = THUMBNAIL_MAX_WIDTH/width;
 		
 		double scaleRatio = widthRatio < heightRatio ? widthRatio : heightRatio;
@@ -154,7 +161,50 @@ public class PhotoService {
 		return photo.getOwner().equals(account);
 	}
 
+	public PhotoDto getDtoById(int id) {
+		Photo photo = getById(id);
+		return convert(photo);
+	}
+	
 	public Photo getById(int id) {
 		return Data.getInstance().getEntityManager().find(Photo.class, id);
+	}
+
+	private PhotoDto convert(Photo photo) {
+		PhotoDto dto = new PhotoDto();
+		
+		dto.setId(photo.getId());
+		dto.setName(photo.getName());
+		dto.setDescription(photo.getDescription());
+		dto.setDateAdded(photo.getDateAdded().toString());
+		dto.setOwner(photo.getOwner().getName());
+		dto.setPath(getPath(photo));
+		
+		return dto;
+	}
+
+	private PathDto[] getPath(Photo photo) {
+		List<PathDto> path = new LinkedList<>();
+		
+		Item parent = getParent(photo);
+		
+		while(parent != null) {
+			PathDto pathDto = new PathDto();
+			path.add(pathDto);
+			parent = getParent(parent);
+		}
+		
+		return path.toArray(new PathDto[0]);
+	}
+
+	private Item getParent(Item item) {
+		Query q = Data.getInstance().getEntityManager().createQuery(
+				"SELECT i FROM Item i WHERE parent.id=:parentId");
+			q.setParameter("parentId", item.getId());
+			try {
+				return (Item) q.getSingleResult();
+			} catch (NoResultException exc) {
+				return null;
+			}
 	}
 }

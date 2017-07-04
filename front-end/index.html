@@ -1,5 +1,17 @@
 <script type="text/javascript">
 	var pages = ["login", "register", "photos", "photo"];
+	
+	$(document).on("click", "#logout", function() {
+		
+	});
+	
+	$(window).on('hashchange', function() {
+		var hash = window.location.hash;
+		
+		var requestInfo = getRequestInfo(hash);
+		populateContent(requestInfo.page);
+	});
+	
 	$(document).ready(function() {
 		var hash = window.location.hash;
 		var requestInfo = getRequestInfo(hash);

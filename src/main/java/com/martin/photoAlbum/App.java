@@ -1,17 +1,12 @@
 package com.martin.photoAlbum;
 
-import java.net.InetAddress;
 import java.net.URI;
-import java.net.UnknownHostException;
 
 import javax.ws.rs.core.UriBuilder;
 
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-
-import com.sun.jersey.api.container.httpserver.HttpServerFactory;
-import com.sun.jersey.api.core.PackagesResourceConfig;
 
 
 /**

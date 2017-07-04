@@ -1,4 +1,4 @@
-package com.martin.photoAlbum.entities;
+package dto;
 
 import java.util.Collection;
 

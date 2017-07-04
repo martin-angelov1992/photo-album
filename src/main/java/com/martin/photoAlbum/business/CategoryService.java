@@ -2,6 +2,7 @@ package com.martin.photoAlbum.business;
 
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -12,7 +13,10 @@ import com.martin.photoAlbum.Data;
 import com.martin.photoAlbum.Session;
 import com.martin.photoAlbum.entities.Account;
 import com.martin.photoAlbum.entities.Category;
-import com.martin.photoAlbum.entities.SimpleCategory;
+import com.martin.photoAlbum.entities.Photo;
+
+import dto.CategoryDto;
+import dto.SimpleCategory;
 
 public class CategoryService {
 
@@ -230,6 +234,45 @@ public class CategoryService {
 		simpleCategory.setName(category.getName());
 		
 		return simpleCategory;
+	}
+
+	public CategoryDto getDtoById(int id) {
+		CategoryDto dto = new CategoryDto();
+		
+		Category category = getById(id);
+		
+		if (category == null) {
+			return null;
+		}
+		
+		dto.setName(category.getName());
+		dto.setOwner(category.getOwner().getName());
+		
+		fillSubCategories(dto, id);
+		fillThumbnails(dto, id);
+		
+		return dto;
+	}
+	
+	private void fillThumbnails(CategoryDto dto, int categoryId) {
+		EntityManager em = Data.getInstance().getEntityManager();
+		
+		Query q = em.createQuery("SELECT p FROM Photo p p.parent.id=:parentId", Photo.class);
+		q.setParameter("parentId", categoryId);
+	}
+
+	private void fillSubCategories(CategoryDto dto, int categoryId) {
+		List<CategoryDto> dtoList = new LinkedList<>();
+		EntityManager em = Data.getInstance().getEntityManager();
+		
+		Query q = em.createQuery("SELECT c FROM Category c c.parent.id=:parentId", Category.class);
+		q.setParameter("parentId", categoryId);
+		
+		List<Category> categories = q.getResultList();
+		
+		for (Category category : categories) {
+			
+		}
 	}
 
 	public Category getById(int id) {
