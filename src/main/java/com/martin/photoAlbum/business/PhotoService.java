@@ -186,10 +186,13 @@ public class PhotoService {
 	private PathDto[] getPath(Photo photo) {
 		List<PathDto> path = new LinkedList<>();
 		
-		Item parent = getParent(photo);
+		Category parent = getParent(photo);
 		
 		while(parent != null) {
 			PathDto pathDto = new PathDto();
+			pathDto.setId(parent.getId());
+			pathDto.setName(parent.getName());
+			
 			path.add(pathDto);
 			parent = getParent(parent);
 		}
@@ -197,12 +200,12 @@ public class PhotoService {
 		return path.toArray(new PathDto[0]);
 	}
 
-	private Item getParent(Item item) {
+	private Category getParent(Item item) {
 		Query q = Data.getInstance().getEntityManager().createQuery(
-				"SELECT i FROM Item i WHERE parent.id=:parentId");
+				"SELECT c FROM Category c WHERE parent.id=:parentId");
 			q.setParameter("parentId", item.getId());
 			try {
-				return (Item) q.getSingleResult();
+				return (Category) q.getSingleResult();
 			} catch (NoResultException exc) {
 				return null;
 			}
