@@ -1,5 +1,9 @@
 <script type="text/javascript">
-	var pages = ["login", "register", "photos", "photo"];
+	var pages = ["login", "register", 
+		         "photos", "photo", 
+		         "categories", "change-password",
+		         "edit-profile", "edit-photo",
+		         "edit-category"];
 	
 	$(document).on("click", "#logout", function() {
 		
@@ -32,10 +36,27 @@
 	
 	function runContentScript(page) {
 		$.getScript("js/".page.".js", function() {
-			  var functionName = "populate".ucfirst(page);
+			  var functionName = pageToJSFunctionName(page);
 			  
-			  window[functionName]();
+			  // If function exists
+			  if(typeof window[functionName] === 'function') {
+			  	  window[functionName]();
+			  }
 		});
+	}
+	
+	function pageToJSFunctionName(page) {
+		var find = /(\-\w)/g;
+		var convert =  function(matches){
+		    return matches[1].toUpperCase();
+		};
+		
+		var convertedPage = page.replace(
+		    find,
+		    convert
+		);
+		
+		return "populate"+convertedPage;
 	}
 	
 	function ucfirst(string) {
