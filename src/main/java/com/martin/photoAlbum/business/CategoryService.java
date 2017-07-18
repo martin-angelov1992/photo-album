@@ -16,6 +16,7 @@ import com.martin.photoAlbum.entities.Category;
 import com.martin.photoAlbum.entities.Photo;
 
 import dto.CategoryDto;
+import dto.CategoryWithPathDto;
 import dto.SimpleCategory;
 
 public class CategoryService {
@@ -62,11 +63,11 @@ public class CategoryService {
 	
 	public AddCategoryResult add(String name, Integer parentId) {
 		if (name == null || name.equals("")) {
-			AddCategoryResult result = new AddCategoryResult();
-			
-			result.setErrorCode(ErrorCode.EMPTY_NAME);
-			
-			return result;
+			return new AddCategoryResult(ErrorCode.EMPTY_NAME);;
+		}
+		
+		if (name.contains("/")) {
+			return new AddCategoryResult(ErrorCode.ILLEGAL_CHARACTER);
 		}
 		
 		Integer newId;
@@ -145,12 +146,16 @@ public class CategoryService {
 	}
 
 	public static enum ErrorCode {
-		OK, EMPTY_NAME
+		OK, EMPTY_NAME, ILLEGAL_CHARACTER
 	}
 	
 	public static class AddCategoryResult {
 		private Integer newId;
 		private ErrorCode errorCode;
+
+		public AddCategoryResult(ErrorCode errorCode) {
+			this.errorCode = errorCode;
+		}
 
 		public ErrorCode getErrorCode() {
 			return errorCode;
@@ -262,7 +267,7 @@ public class CategoryService {
 	}
 
 	private void fillSubCategories(CategoryDto dto, int categoryId) {
-		List<CategoryDto> dtoList = new LinkedList<>();
+		List<CategoryDto> subcategories = new LinkedList<>();
 		EntityManager em = Data.getInstance().getEntityManager();
 		
 		Query q = em.createQuery("SELECT c FROM Category c c.parent.id=:parentId", Category.class);
@@ -271,8 +276,13 @@ public class CategoryService {
 		List<Category> categories = q.getResultList();
 		
 		for (Category category : categories) {
-			
+			CategoryDto subDto = new CategoryDto();
+			subDto.setName(category.getName());
+			subDto.setOwner(category.getOwner().getName());
+			fillSubCategories(subDto, category.getId());
 		}
+		
+		dto.setSubCategories(subcategories);
 	}
 
 	public Category getById(int id) {
@@ -281,5 +291,41 @@ public class CategoryService {
 		Category category = em.find(Category.class, id);
 		
 		return category;
+	}
+	
+	public List<CategoryWithPathDto> getAll() {
+		EntityManager em = Data.getInstance().getEntityManager();
+		Query q = em.createQuery("SELECT c FROM Category c", Category.class);
+		
+		List<Category> categories = q.getResultList();
+		
+		List<CategoryWithPathDto> dtos = new ArrayList<>(categories.size());
+		
+		for (Category category : categories) {
+			CategoryWithPathDto dto = new CategoryWithPathDto();
+			
+			dto.setId(category.getId());
+			dto.setName(dto.getName());
+			dto.setPath(getPath(category));
+			
+			dtos.add(dto);
+		}
+		
+		return dtos;
+	}
+
+	private String getPath(Category category) {
+		List<String> parentNames = new LinkedList<>();
+		Category parent;
+		do {
+			parent = getParent(category);
+			parentNames.add(parent.getName());
+		} while (parent != null);
+		return null;
+	}
+
+	private Category getParent(Category category) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

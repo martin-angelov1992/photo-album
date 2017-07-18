@@ -1,5 +1,7 @@
 package com.martin.photoAlbum.requesthandlers;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -32,6 +34,11 @@ public class CategoryApiService {
 	
 	@PUT
 	public EditResult edit(String newName) {
+		
+	}
+	
+	@GET
+	public List<Category> getAll() {
 		
 	}
 }
