@@ -9,16 +9,18 @@
 		
 	});
 	
+	var requestInfo = null;
+	
 	$(window).on('hashchange', function() {
 		var hash = window.location.hash;
 		
-		var requestInfo = getRequestInfo(hash);
+		requestInfo = getRequestInfo(hash);
 		populateContent(requestInfo.page);
 	});
 	
 	$(document).ready(function() {
 		var hash = window.location.hash;
-		var requestInfo = getRequestInfo(hash);
+		requestInfo = getRequestInfo(hash);
 		
 		populateProfileNav();
 		populateContent(requestInfo.page);
@@ -92,10 +94,10 @@
 			theRest = parts[1];
 		}
 		
-		if (page != null && page != "") {
-			info['page'] = page;
-		} else {
+		if (page == null || page == "") {
 			info['page'] = "categories";
+		} else {
+			info['page'] = page;
 		}
 		
 		var params = getParams(theRest);
@@ -121,6 +123,13 @@
 		}
 		
 		return params;
+	}
+
+	function escapeHtml(text) {
+	    'use strict';
+	    return text.replace(/[\"&<>]/g, function (a) {
+	        return { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' }[a];
+	    });
 	}
 </script>
 <div id="header"><span id="photos-link"></span> | <span id="profile-nav"></span></div>

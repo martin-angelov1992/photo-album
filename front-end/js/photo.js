@@ -55,13 +55,6 @@ function showPhotoPath(photo) {
 	$("#path").html(pathHtml);
 }
 
-function escapeHtml(text) {
-    'use strict';
-    return text.replace(/[\"&<>]/g, function (a) {
-        return { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' }[a];
-    });
-}
-
 function getCategoryLink(id) {
 	return "#categories?id="+id;
 }
