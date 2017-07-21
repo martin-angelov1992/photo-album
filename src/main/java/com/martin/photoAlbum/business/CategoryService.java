@@ -252,6 +252,7 @@ public class CategoryService {
 		
 		dto.setName(category.getName());
 		dto.setOwner(category.getOwner().getName());
+		dto.setId(id);
 		
 		fillSubCategories(dto, id);
 		fillThumbnails(dto, id);
@@ -279,6 +280,7 @@ public class CategoryService {
 			CategoryDto subDto = new CategoryDto();
 			subDto.setName(category.getName());
 			subDto.setOwner(category.getOwner().getName());
+			subDto.setId(category.getId());
 			fillSubCategories(subDto, category.getId());
 		}
 		

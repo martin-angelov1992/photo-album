@@ -21,8 +21,12 @@ function showSubCategories(category, containerId) {
 
 	for (i in subCategories) {
 		var subCategory = subCategories[i];
+		var newContainerId = containerId+"_"+subCategory.id;
 		
+		$("#"+categoryId).append("<div id='"+newCategoryId+"' class='category'><h3>"+escapeHtml(category)+"</h3></div>");
 		
+		showThumbnails(subCategory, newCategoryId)
+		showSubCategories(subCategory, newContainerId);
 	}
 }
 
@@ -32,6 +36,6 @@ function showThumbnails(category, containerId) {
 	for (i in thumbnails) {
 		var thumbnail = thumbnails[i];
 		
-		
+		$("#"+categoryId).append("<div><h4>"+escapeHtml(thumbnail.name)+"</h4><img src='thumbnail/'"+thumbnail.id+"/></div>")
 	}
 }
