@@ -1,10 +1,17 @@
 package com.martin.photoAlbum.entities;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Account {
+	@Id private int id;
 	private String username;
 	private String passHash;
 	private String mail;
 	private String name;
+	
+	public Account() {}
 	
 	public Account(String username, String passHash, String mail, String name) {
 		super();
@@ -38,6 +45,12 @@ public class Account {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 }

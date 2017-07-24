@@ -2,9 +2,13 @@ package com.martin.photoAlbum.entities;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 
+@MappedSuperclass
 public class Item {
 	private @Id @GeneratedValue int id;
+	@ManyToOne
 	private Account owner;
 	private String name;
 

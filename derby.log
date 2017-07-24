@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Mon Jul 24 18:28:00 EEST 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.13.1.1 - (1765088): instance a816c00e-015d-7536-532a-00000af2b7c0 
+on database directory C:\home\vogella\databases\simpleDb with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
+Loaded from file:/C:/my/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_131-b11
+user.dir=C:\my\photoAlbum
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

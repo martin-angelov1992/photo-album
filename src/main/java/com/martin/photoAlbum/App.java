@@ -2,11 +2,14 @@ package com.martin.photoAlbum;
 
 import java.net.URI;
 
+import javax.persistence.EntityManager;
 import javax.ws.rs.core.UriBuilder;
 
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+
+import com.martin.photoAlbum.entities.Photo;
 
 
 /**
@@ -21,5 +24,9 @@ public class App
         ResourceConfig config = new ResourceConfig(requestHandlers.getAll());
         Server server = JettyHttpContainerFactory.createServer(baseUri, config);
         server.start();
+        
+        EntityManager em = Data.getInstance().getEntityManager();
+        
+        em.persist(new Photo());
     }
 }

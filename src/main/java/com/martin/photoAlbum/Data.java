@@ -22,7 +22,7 @@ public class Data {
 	
 	public static Data getInstance() {
 		if (instance == null) {
-			synchronized(Data.instance) {
+			synchronized(Data.class) {
 				if (instance == null) {
 					instance = new Data();
 				}

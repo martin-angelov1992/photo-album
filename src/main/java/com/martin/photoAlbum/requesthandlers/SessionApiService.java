@@ -13,6 +13,6 @@ import javax.ws.rs.core.Response;
 public class SessionApiService {
 	@GET
 	public Response get() {
-		
+		return null;
 	}
 }

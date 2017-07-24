@@ -63,7 +63,7 @@ public class CategoryService {
 	
 	public AddCategoryResult add(String name, Integer parentId) {
 		if (name == null || name.equals("")) {
-			return new AddCategoryResult(ErrorCode.EMPTY_NAME);;
+			return new AddCategoryResult(ErrorCode.EMPTY_NAME);
 		}
 		
 		if (name.contains("/")) {
@@ -153,6 +153,8 @@ public class CategoryService {
 		private Integer newId;
 		private ErrorCode errorCode;
 
+		public AddCategoryResult() {}
+		
 		public AddCategoryResult(ErrorCode errorCode) {
 			this.errorCode = errorCode;
 		}

@@ -2,8 +2,10 @@ package com.martin.photoAlbum.entities;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
 import javax.persistence.Lob;
 
+@Entity
 public class Photo extends Item {
 	private String description;
 	private Date dateAdded;

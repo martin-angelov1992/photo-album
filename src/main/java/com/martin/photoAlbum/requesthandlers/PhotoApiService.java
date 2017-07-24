@@ -8,16 +8,16 @@ import javax.ws.rs.core.Response;
 public class PhotoApiService {
 	@POST
 	public Response add(int categoryID, String name, String description) {
-		
+		return null;
 	}
 	
 	@PUT
 	public Response edit(int id, String name, String description) {
-		
+		return null;
 	}
 	
 	@DELETE
 	public Response delete(int id) {
-		
+		return null;
 	}
 }
