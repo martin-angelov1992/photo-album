@@ -169,6 +169,10 @@ public class AccountService {
         return sb.toString();
 	}
 	
+	public Account getById(int id) {
+		return Data.getInstance().getEntityManager().find(Account.class, id);
+	}
+	
 	public static class RegisterResult {
 		private RegisterStatus status;
 		private Account account;

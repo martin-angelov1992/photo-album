@@ -7,12 +7,14 @@
 		<class>com.martin.photoAlbum.entities.Account</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:file:db" />
 			<property name="javax.persistence.jdbc.user" value="sa" />
 			<property name="javax.persistence.jdbc.password" value="" />
-			<property name="eclipselink.ddl-generation" value="create-tables" />
-			<property name="eclipselink.ddl-generation.output-mode"
-				value="database" />
+            <property name="hibernate.archive.autodetection" value="class"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+			<property name="dialect" value="org.hibernate.dialect.HSQLDialect"/>
 		</properties>
 
 	</persistence-unit>

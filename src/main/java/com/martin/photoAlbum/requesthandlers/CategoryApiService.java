@@ -12,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.martin.photoAlbum.business.CategoryService;
 import com.martin.photoAlbum.business.CategoryService.DeleteResult;
 import com.martin.photoAlbum.business.CategoryService.EditResult;
 import com.martin.photoAlbum.entities.Category;
@@ -20,6 +21,8 @@ import com.martin.photoAlbum.entities.Category;
 @Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON })
 public class CategoryApiService {
+	private CategoryService service = new CategoryService();
+	
 	@GET
 	@Path("/{id}")
 	public Category get(@PathParam("id") int id) {

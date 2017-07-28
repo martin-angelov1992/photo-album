@@ -13,4 +13,8 @@ public class Session {
 	public boolean isLoggedIn() {
 		return loggedInAcc != null;
 	}
+	
+	public void setAccount(Account acc) {
+		loggedInAcc = acc;
+	}
 }

@@ -23,7 +23,11 @@ import magick.ImageInfo;
 import magick.MagickException;
 import magick.MagickImage;
 
-public class PhotoService {
+public class PhotoService extends Service {
+	public PhotoService(Session session) {
+		super(session);
+	}
+
 	private final static Logger logger = Logger.getLogger(CategoryService.class);
 	private static final int THUMBNAIL_MAX_WIDTH = 500;
 	private static final int THUMBNAIL_MAX_HEIGHT = 500;
@@ -40,12 +44,6 @@ public class PhotoService {
 
 	public enum AddResult {
 		NOT_LOGGED_IN, CATEGORY_DOES_NOT_EXIST, OK
-	}
-
-	private Session session;
-	
-	public PhotoService(Session session) {
-		this.session = session;
 	}
 	
 	public AddResult add(int categoryID, String name, String description, byte[] photoContent) {
