@@ -1,5 +1,6 @@
 package com.martin.photoAlbum.requesthandlers;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
@@ -8,11 +9,20 @@ import com.martin.photoAlbum.business.AccountService;
 import com.martin.photoAlbum.business.Service;
 import com.martin.photoAlbum.entities.Account;
 
-public class ApiService<T extends Service> {
+public class ApiService<T extends Service> extends HttpServlet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Context
     private HttpServletRequest webRequest;
 	
 	protected T service;
+	
+	public ApiService(T service) {
+		this.service = service;
+	}
 	
 	public Session getSession() {
 		AccountService accService = new AccountService(null);
@@ -24,7 +34,7 @@ public class ApiService<T extends Service> {
 		
 		Account acc = accService.getById(Integer.valueOf((String)accIdObj));
 		
-		
+		return new Session(acc);
 	}
 	
 	protected void updateSession() {

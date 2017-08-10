@@ -5,6 +5,8 @@ import com.martin.photoAlbum.Session;
 public class Service {
 	protected Session session;
 	
+	public Service() {}
+	
 	public Service(Session session) {
 		this.session = session;
 	}

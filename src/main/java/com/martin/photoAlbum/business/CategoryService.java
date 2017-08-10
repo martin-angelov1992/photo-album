@@ -19,8 +19,10 @@ import dto.CategoryDto;
 import dto.CategoryWithPathDto;
 import dto.SimpleCategory;
 
-public class CategoryService {
+public class CategoryService extends Service {
 
+	public CategoryService() {}
+	
 	public enum DeleteResult {
 		NOT_OWNER, NOT_LOGGED_IN, OK
 
@@ -32,10 +34,9 @@ public class CategoryService {
 	}
 
 	private final static Logger logger = Logger.getLogger(CategoryService.class);
-	private Session session;
 	
 	public CategoryService(Session session) {
-		this.session = session;
+		super(session);
 	}
 	
 	public DeleteResult delete(int id) {

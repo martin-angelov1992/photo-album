@@ -1,12 +1,12 @@
 package com.martin.photoAlbum;
 
-import java.net.URI;
-
-import javax.ws.rs.core.UriBuilder;
-
 import org.eclipse.jetty.server.Server;
-import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
+import org.eclipse.jetty.server.session.HashSessionManager;
+import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 
 /**
@@ -16,10 +16,17 @@ import org.glassfish.jersey.server.ResourceConfig;
 public class App 
 {
     public static void main(String[] args) throws Exception {
-    	RequestHandlers requestHandlers = RequestHandlers.getInstance();
-        URI baseUri = UriBuilder.fromUri("http://localhost/").port(9998).build();
-        ResourceConfig config = new ResourceConfig(requestHandlers.getAll());
-        Server server = JettyHttpContainerFactory.createServer(baseUri, config);
+        HashSessionManager manager = new HashSessionManager();
+        SessionHandler sessions = new SessionHandler(manager);
+        ResourceConfig config = new ResourceConfig();
+        config.packages("com.martin.photoAlbum.requesthandlers");
+        ServletHolder servlet = new ServletHolder(new ServletContainer(config));
+
+        Server server = new Server(9998);
+        ServletContextHandler context = new ServletContextHandler(server, "/*");
+        context.addServlet(servlet, "/*");
+        context.setHandler(sessions);
+        
         server.start();
     }
 }
