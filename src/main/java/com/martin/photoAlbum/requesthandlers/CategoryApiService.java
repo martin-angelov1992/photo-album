@@ -3,24 +3,20 @@ package com.martin.photoAlbum.requesthandlers;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
-import org.glassfish.jersey.server.ContainerRequest;
+import org.jboss.logging.Param;
 
 import com.martin.photoAlbum.business.CategoryService;
+import com.martin.photoAlbum.business.CategoryService.AddCategoryResult;
 import com.martin.photoAlbum.business.CategoryService.DeleteResult;
 import com.martin.photoAlbum.business.CategoryService.EditResult;
 import com.martin.photoAlbum.entities.Category;
@@ -30,10 +26,6 @@ import com.martin.photoAlbum.entities.Category;
 @Produces({ MediaType.APPLICATION_JSON })
 public class CategoryApiService extends ApiService<CategoryService> {
 	private static final long serialVersionUID = 1L;
-	@Context
-    HttpServletRequest webRequest2;
-	@Context Request request;
-	
 
 	public CategoryApiService() {
 		super(new CategoryService());
@@ -41,12 +33,10 @@ public class CategoryApiService extends ApiService<CategoryService> {
     
 	@GET
 	@Path("/{id}")
-	public Response get(@Context HttpServletRequest webRequest, @Context HttpServletResponse webResponse) {
+	public Category get(@Param int id) {
 		updateSession();
 		
-		((ContainerRequest)request).getPropertyNames();
-		return null;
-		//return service.getById(id);
+		return service.getById(id);
 	}
 	
 	@DELETE
@@ -55,8 +45,10 @@ public class CategoryApiService extends ApiService<CategoryService> {
 	}
 	
 	@POST
-	public Integer add(String name) {
-		return null;
+	public Response add(@Param String name) {
+		AddCategoryResult result = service.add(name);
+		
+		return Response.status(200).entity(result.getNewId()).build();
 	}
 	
 	@PUT

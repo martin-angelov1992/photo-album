@@ -3,22 +3,33 @@ package com.martin.photoAlbum.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+
+@Entity
 public class Category extends Item {
-	private Set<Item> subItems;
+	@OneToMany
+	private Set<Category> subCategories;
+	@OneToMany
+	private Set<Photo> photos;
 	
 	public Category() {
-		subItems = new HashSet<>();
+		subCategories = new HashSet<>();
+		photos = new HashSet<>();
 	}
 	
-	public Set<Item> getSubItems() {
-		return subItems;
+	public Set<Category> getSubCategories() {
+		return subCategories;
 	}
-	
+	public Set<Photo> getPhotos() {
+		return photos;
+	}
+
 	public void addSubCategry(Category category) {
-		subItems.add(category);
+		subCategories.add(category);
 	}
 	
 	public void addPhoto(Photo photo) {
-		subItems.add(photo);
+		photos.add(photo);
 	}
 }

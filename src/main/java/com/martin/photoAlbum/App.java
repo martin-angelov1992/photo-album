@@ -20,7 +20,7 @@ public class App
         SessionHandler sessions = new SessionHandler(manager);
         ResourceConfig config = new ResourceConfig();
         config.packages("com.martin.photoAlbum.requesthandlers");
-        ServletHolder servlet = new ServletHolder(new ServletContainer(config));
+        ServletHolder servlet = new MyServletHolder(new ServletContainer(config));
 
         Server server = new Server(9998);
         ServletContextHandler context = new ServletContextHandler(server, "/*");
