@@ -1,168 +1,175 @@
-<script type="text/javascript">
-	var pages = ["login", "register", 
-		         "photos", "photo", 
-		         "categories", "change-password",
-		         "edit-profile", "edit-photo",
-		         "edit-category"];
-	
-	$(document).on("click", "#logout", function() {
-		
-	});
-	
-	var requestInfo = null;
-	
-	$(window).on('hashchange', function() {
-		var hash = window.location.hash;
-		
-		requestInfo = getRequestInfo(hash);
-		populateContent(requestInfo.page);
-	});
-	
-	$(document).ready(function() {
-		var hash = window.location.hash;
-		requestInfo = getRequestInfo(hash);
-		
-		populateProfileNav();
-		populateContent(requestInfo.page);
-	});
-	
-	function openPage(page) {
-		populateContent(page);
-		runContentScript(page)
-	}
-	
-	function populateContent(page) {
-		$("#content").load(page.".html");
-		runContentScript(page);
-	}
-	
-	function runContentScript(page) {
-		$.getScript("js/".page.".js", function() {
-			  var functionName = pageToJSFunctionName(page);
-			  
-			  // If function exists
-			  if(typeof window[functionName] === 'function') {
-			  	  window[functionName]();
-			  }
-		});
-	}
-	
-	function pageToJSFunctionName(page) {
-		var find = /(\-\w)/g;
-		var convert =  function(matches){
-		    return matches[1].toUpperCase();
-		};
-		
-		var convertedPage = page.replace(
-		    find,
-		    convert
-		);
-		
-		return "populate"+convertedPage;
-	}
-	
-	function ucfirst(string) {
-	    return string.charAt(0).toUpperCase() + string.slice(1);
-	}
-	
-	function populateProfileNav() {
-		$.getJSON( "session", function(sessionInfo) {
-			if (sessionInfo.loggedIn) {
-				populateLoggedInProfileNav(sessionInfo.account);
-			} else {
-				populateNotLoggedInProfileNav();
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript">
+			var pages = ["login", "register", 
+				         "photos", "photo", 
+				         "categories", "change-password",
+				         "edit-profile", "edit-photo",
+				         "edit-category"];
+			
+			$(document).on("click", "#logout", function() {
+				
+			});
+			
+			var requestInfo = null;
+			
+			$(window).on('hashchange', function() {
+				var hash = window.location.hash;
+				
+				requestInfo = getRequestInfo(hash);
+				populateContent(requestInfo.page);
+			});
+			
+			$(document).ready(function() {
+				var hash = window.location.hash;
+				requestInfo = getRequestInfo(hash);
+				
+				populateProfileNav();
+				populateContent(requestInfo.page);
+			});
+			
+			function openPage(page) {
+				populateContent(page);
+				runContentScript(page)
 			}
-		});
-	}
-	
-	function populateLoggedInProfileNav(account) {
-		
-	}
-	
-	function populateNotLoggedInProfileNav() {
-		
-	}
-	
-	function getRequestInfo(hash) {
-		var parts = hash.split("?");
-		
-		var info = {};
-		var page = parts[0];
-		var theRest = "";
-		
-		if (parts.length > 1) {
-			theRest = parts[1];
-		}
-		
-		if (page == null || page == "") {
-			info['page'] = "categories";
-		} else {
-			info['page'] = page;
-		}
-		
-		var params = getParams(theRest);
-		
-		for (key in params) {
-			info[key] = params[key];
-		}
-		
-		return info;
-	}
-	
-	function getParams(str) {
-		var params = {};
-		var parts = str.split("&");
-		
-		for (i in parts) {
-			var paramParts = parts[i].split("=");
 			
-			var name = paramParts[0];
-			var value = paramParts[1];
+			function populateContent(page) {
+				$("#content").load(page+".html");
+				runContentScript(page);
+			}
 			
-			params[name] = value;
-		}
+			function runContentScript(page) {
+				$.getScript("js/"+page+".js", function() {
+					  var functionName = pageToJSFunctionName(page);
+					  
+					  // If function exists
+					  if(typeof window[functionName] === 'function') {
+					  	  window[functionName]();
+					  }
+				});
+			}
+			
+			function pageToJSFunctionName(page) {
+				var find = /(\-\w)/g;
+				var convert =  function(matches){
+				    return matches[1].toUpperCase();
+				};
+				
+				var convertedPage = page.replace(
+				    find,
+				    convert
+				);
+				
+				return "populate"+convertedPage;
+			}
+			
+			function ucfirst(string) {
+			    return string.charAt(0).toUpperCase() + string.slice(1);
+			}
+			
+			function populateProfileNav() {
+				$.getJSON( "session", function(sessionInfo) {
+					if (sessionInfo.loggedIn) {
+						populateLoggedInProfileNav(sessionInfo.account);
+					} else {
+						populateNotLoggedInProfileNav();
+					}
+				});
+			}
+			
+			function populateLoggedInProfileNav(account) {
+				
+			}
+			
+			function populateNotLoggedInProfileNav() {
+				
+			}
+			
+			function getRequestInfo(hash) {
+				var parts = hash.split("?");
+				
+				var info = {};
+				var page = parts[0];
+				var theRest = "";
+				
+				if (parts.length > 1) {
+					theRest = parts[1];
+				}
+				
+				if (page == null || page == "") {
+					info['page'] = "categories";
+				} else {
+					info['page'] = page;
+				}
+				
+				var params = getParams(theRest);
+				
+				for (key in params) {
+					info[key] = params[key];
+				}
+				
+				return info;
+			}
+			
+			function getParams(str) {
+				var params = {};
+				var parts = str.split("&");
+				
+				for (i in parts) {
+					var paramParts = parts[i].split("=");
+					
+					var name = paramParts[0];
+					var value = paramParts[1];
+					
+					params[name] = value;
+				}
+				
+				return params;
+			}
 		
-		return params;
-	}
-
-	function escapeHtml(text) {
-	    'use strict';
-	    return text.replace(/[\"&<>]/g, function (a) {
-	        return { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' }[a];
-	    });
-	}
-	
-	function capitalizeFirstLetter(string) {
-	    return string.charAt(0).toUpperCase() + string.slice(1);
-	}
-
-	function convertConstantToKey(constant) {
-		var key = "";
-		var parts = constant.split("_");
-	  
-	  for (i in parts) {
-	  	var part = parts[i];
-	    var lowerCasePart = part.toLowerCase();
-	    
-	  	if (i == 0) {
-	      key += lowerCasePart;
-	    	continue;
-	    }
-	    
-	    key += capitalizeFirstLetter(lowerCasePart);
-	  }
-	  
-	  return key;
-	}
-
-	function showError(errorCode) {
-		var errorKey = convertConstantToKey(constant);
+			function escapeHtml(text) {
+			    'use strict';
+			    return text.replace(/[\"&<>]/g, function (a) {
+			        return { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' }[a];
+			    });
+			}
+			
+			function capitalizeFirstLetter(string) {
+			    return string.charAt(0).toUpperCase() + string.slice(1);
+			}
 		
-		var errorText = errorMap[errorCode];
-
-		$("#errorHolder").text(errorText);
-	}
-</script>
-<div id="header"><span id="photos-link"></span> | <span id="profile-nav"></span></div>
-	<div id="content"></div>
-<div id="footer"></div>
+			function convertConstantToKey(constant) {
+				var key = "";
+				var parts = constant.split("_");
+			  
+			  for (i in parts) {
+			  	var part = parts[i];
+			    var lowerCasePart = part.toLowerCase();
+			    
+			  	if (i == 0) {
+			      key += lowerCasePart;
+			    	continue;
+			    }
+			    
+			    key += capitalizeFirstLetter(lowerCasePart);
+			  }
+			  
+			  return key;
+			}
+		
+			function showError(errorCode) {
+				var errorKey = convertConstantToKey(constant);
+				
+				var errorText = errorMap[errorCode];
+		
+				$("#errorHolder").text(errorText);
+			}
+		</script>
+	</head>
+	<body>
+		<div id="header"><span id="photos-link"></span> | <span id="profile-nav"></span></div>
+			<div id="content"></div>
+		<div id="footer"></div>
+	</body>
+</html>
