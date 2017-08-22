@@ -10,14 +10,13 @@ import com.martin.photoAlbum.Data;
 import com.martin.photoAlbum.Session;
 import com.martin.photoAlbum.entities.Account;
 
-public class AccountService {
+public class AccountService extends Service {
 	private static final String VALID_EMAIl_PATTERN = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
 	
 	private Session session;
 	private CategoryService categoryService;
 	
-	public AccountService(Session session) {
-		this.session = session;
+	public AccountService() {
 		this.categoryService = new CategoryService(session);
 	}
 	

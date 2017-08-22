@@ -98,6 +98,8 @@ public class CategoryService extends Service {
 		}
 		
 		Category category = new Category();
+		category.setName(name);
+		category.setOwner(session.getAccount());
 		
 		em.persist(category);
 		em.flush();
@@ -109,6 +111,7 @@ public class CategoryService extends Service {
 		Category category = new Category();
 		
 		category.setName(name);
+		category.setOwner(session.getAccount());
 		
 		EntityManager em = Data.getInstance().getEntityManager();
 		em.persist(category);

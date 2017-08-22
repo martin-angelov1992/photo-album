@@ -25,7 +25,7 @@ public class ApiService<T extends Service> extends HttpServlet {
 	}
 	
 	public Session getSession() {
-		AccountService accService = new AccountService(null);
+		AccountService accService = new AccountService();
 		Object accIdObj = webRequest.getSession().getAttribute("accId");
 		
 		if (accIdObj == null) {
