@@ -25,11 +25,14 @@ public class LoginApiService extends ApiService<AccountService> {
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	public Response login(@FormParam("username") String username, 
 			@FormParam("password") String password) {
+		updateSession();
 		Account account = service.login(username, password);
 		
 		if (account == null) {
 			return Response.status(404).entity("NOT_FOUND").build();
 		}
+		
+		webRequest.getSession().setAttribute("accId", account.getId());
 		
 		return Response.status(200).entity(account).build();
 	}

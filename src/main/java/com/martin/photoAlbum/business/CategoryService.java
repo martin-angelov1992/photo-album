@@ -145,8 +145,7 @@ public class CategoryService extends Service {
 	}
 	
 	private boolean isOwner(Account account, Category category) {
-		// TODO Auto-generated method stub
-		return false;
+		return category.getOwner().equals(account);
 	}
 
 	public static enum ErrorCode {
@@ -257,7 +256,11 @@ public class CategoryService extends Service {
 		}
 		
 		dto.setName(category.getName());
-		dto.setOwner(category.getOwner().getName());
+		
+		if (category.getOwner() != null) {
+			dto.setOwner(category.getOwner().getName());
+		}
+		
 		dto.setId(id);
 		
 		fillSubCategories(dto, id);
@@ -269,7 +272,7 @@ public class CategoryService extends Service {
 	private void fillThumbnails(CategoryDto dto, int categoryId) {
 		EntityManager em = Data.getInstance().getEntityManager();
 		
-		Query q = em.createQuery("SELECT p FROM Photo p p.parent.id=:parentId", Photo.class);
+		Query q = em.createQuery("SELECT p FROM Photo p WHERE p.parent.id=:parentId", Photo.class);
 		q.setParameter("parentId", categoryId);
 	}
 
@@ -277,7 +280,7 @@ public class CategoryService extends Service {
 		List<CategoryDto> subcategories = new LinkedList<>();
 		EntityManager em = Data.getInstance().getEntityManager();
 		
-		Query q = em.createQuery("SELECT c FROM Category c c.parent.id=:parentId", Category.class);
+		Query q = em.createQuery("SELECT c FROM Category c WHERE c.parent.id=:parentId", Category.class);
 		q.setParameter("parentId", categoryId);
 		
 		List<Category> categories = q.getResultList();

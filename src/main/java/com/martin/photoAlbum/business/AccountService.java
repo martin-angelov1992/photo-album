@@ -12,8 +12,7 @@ import com.martin.photoAlbum.entities.Account;
 
 public class AccountService extends Service {
 	private static final String VALID_EMAIl_PATTERN = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
-	
-	private Session session;
+
 	private CategoryService categoryService;
 	
 	public AccountService() {
@@ -21,6 +20,12 @@ public class AccountService extends Service {
 	}
 	
 	public RegisterResult register(String username, String password, String email, String name) {
+		Account existingAccount = getAccount(username);
+		
+		if (existingAccount != null) {
+			return new RegisterResult(RegisterStatus.USERNAME_ALREADY_EXISTS);
+		}
+		
 		if (!validUsername(username)) {
 			return new RegisterResult(RegisterStatus.INVALID_USERNAME);
 		}
@@ -108,6 +113,17 @@ public class AccountService extends Service {
 			}
 	}
 	
+	private Account getAccount(String username) {
+		Query q = Data.getInstance().getEntityManager().createQuery(
+				"SELECT a FROM Account a WHERE username = :username");
+			q.setParameter("username", username);
+			try {
+				return (Account) q.getSingleResult();
+			} catch (NoResultException exc) {
+				return null;
+			}
+	}
+	
 	public void logout() {
 		
 	}
@@ -172,6 +188,12 @@ public class AccountService extends Service {
 		return Data.getInstance().getEntityManager().find(Account.class, id);
 	}
 	
+	public void setSession(Session session) {
+		super.setSession(session);
+		
+		categoryService.session = session;
+	}
+	
 	public static class RegisterResult {
 		private RegisterStatus status;
 		private Account account;
@@ -195,7 +217,7 @@ public class AccountService extends Service {
 	}
 	
 	public static enum RegisterStatus {
-		INVALID_USERNAME, INVALID_PASSWORD, INVALID_EMAIL, INVALID_NAME, OK
+		INVALID_USERNAME, INVALID_PASSWORD, INVALID_EMAIL, INVALID_NAME, OK, USERNAME_ALREADY_EXISTS
 	}
 	
 	public static enum EditProfileResult {

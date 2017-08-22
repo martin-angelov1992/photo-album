@@ -4,6 +4,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -12,7 +13,7 @@ import com.martin.photoAlbum.business.AccountService.RegisterResult;
 import com.martin.photoAlbum.business.AccountService.RegisterStatus;
 
 @Path("/register")
-@Consumes({ MediaType.APPLICATION_JSON })
+@Produces({ MediaType.APPLICATION_JSON })
 public class RegisterApiService extends ApiService<AccountService> {
 	 
     /**
@@ -30,6 +31,7 @@ public class RegisterApiService extends ApiService<AccountService> {
     		 			     @FormParam("password") String password, 
     		 			     @FormParam("email") String email, 
     		 			     @FormParam("name") String name) {
+		updateSession();
 		
 		RegisterResult result = service.register(username, password, email, name);
 		

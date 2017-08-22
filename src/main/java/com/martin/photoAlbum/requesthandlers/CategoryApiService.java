@@ -16,6 +16,8 @@ import com.martin.photoAlbum.business.CategoryService.DeleteResult;
 import com.martin.photoAlbum.business.CategoryService.EditResult;
 import com.martin.photoAlbum.entities.Category;
 
+import dto.CategoryDto;
+
 @Path("/category")
 public class CategoryApiService extends ApiService<CategoryService> {
 	private static final long serialVersionUID = 1L;
@@ -28,8 +30,7 @@ public class CategoryApiService extends ApiService<CategoryService> {
 	@Path("/{id}")
 	public Response get(@PathParam("id") int id) {
 		updateSession();
-		
-		Category category = service.getById(id);
+		CategoryDto category = service.getDtoById(id);
 		
 		if (category == null) {
 			return Response.status(404).entity("NOT_FOUND").build();
@@ -39,6 +40,7 @@ public class CategoryApiService extends ApiService<CategoryService> {
 	}
 	
 	@DELETE
+	@Path("/{id}")
 	public Response delete(@PathParam("id") int id) {
 		updateSession();
 
@@ -59,6 +61,7 @@ public class CategoryApiService extends ApiService<CategoryService> {
 	
 	@POST
 	public Response add(@Param String name) {
+		updateSession();
 		AddCategoryResult result = service.add(name);
 		
 		return Response.status(200).entity(result.getNewId()).build();

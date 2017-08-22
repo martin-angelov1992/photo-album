@@ -8,7 +8,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Category extends Item {
-	@OneToMany
+	@OneToMany(mappedBy="parent")
 	private Set<Category> subCategories;
 	@OneToMany
 	private Set<Photo> photos;

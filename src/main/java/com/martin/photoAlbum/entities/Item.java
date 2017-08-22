@@ -14,6 +14,8 @@ public class Item {
 	@ManyToOne
 	private Account owner;
 	private String name;
+    @ManyToOne
+    private Category parent;
 
 	public Account getOwner() {
 		return owner;
@@ -33,5 +35,9 @@ public class Item {
 	
 	public int getId() {
 		return id;
+	}
+	
+	public Category getParent() {
+		return parent;
 	}
 }

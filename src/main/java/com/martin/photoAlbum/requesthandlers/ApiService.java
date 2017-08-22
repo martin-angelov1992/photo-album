@@ -16,7 +16,7 @@ public class ApiService<T extends Service> extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Context
-    private HttpServletRequest webRequest;
+    protected HttpServletRequest webRequest;
 	
 	protected T service;
 	
@@ -32,7 +32,7 @@ public class ApiService<T extends Service> extends HttpServlet {
 			return new Session();
 		}
 		
-		Account acc = accService.getById(Integer.valueOf((String)accIdObj));
+		Account acc = accService.getById((Integer)accIdObj);
 		
 		return new Session(acc);
 	}
