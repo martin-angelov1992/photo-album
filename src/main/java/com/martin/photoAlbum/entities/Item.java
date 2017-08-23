@@ -40,4 +40,8 @@ public class Item {
 	public Category getParent() {
 		return parent;
 	}
+
+	public void setParent(Category parent) {
+		this.parent = parent;
+	}
 }

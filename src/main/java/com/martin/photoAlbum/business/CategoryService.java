@@ -100,6 +100,7 @@ public class CategoryService extends Service {
 		Category category = new Category();
 		category.setName(name);
 		category.setOwner(session.getAccount());
+		category.setParent(parent);
 		
 		em.persist(category);
 		em.flush();
@@ -145,6 +146,10 @@ public class CategoryService extends Service {
 	}
 	
 	private boolean isOwner(Account account, Category category) {
+		if (category.getOwner() == null) {
+			return false;
+		}
+		
 		return category.getOwner().equals(account);
 	}
 
@@ -196,7 +201,7 @@ public class CategoryService extends Service {
 		EntityManager em = Data.getInstance().getEntityManager();
 		
 		Query q = em.createQuery(
-				"SELECT c FROM Category c c.parent IS NULL", Category.class);
+				"SELECT c FROM Category c WHERE c.parent IS NULL", Category.class);
 		List<Category> categories = q.getResultList();
 		
 		List<SimpleCategory> simpleCategories = convertToSimpleCategories(categories);
@@ -210,7 +215,7 @@ public class CategoryService extends Service {
 		EntityManager em = Data.getInstance().getEntityManager();
 		
 		for (SimpleCategory simpleCategory : simpleCategories) {
-			Query q = em.createQuery("SELECT c FROM Category c c.parent.id=:parentId", Category.class);
+			Query q = em.createQuery("SELECT c FROM Category c WHERE c.parent.id=:parentId", Category.class);
 			q.setParameter("parentId", simpleCategory.getId());
 			
 			List<Category> categories = q.getResultList();
@@ -288,8 +293,13 @@ public class CategoryService extends Service {
 		for (Category category : categories) {
 			CategoryDto subDto = new CategoryDto();
 			subDto.setName(category.getName());
-			subDto.setOwner(category.getOwner().getName());
+
+			if (category.getOwner() != null) {
+				subDto.setOwner(category.getOwner().getName());
+			}
+			
 			subDto.setId(category.getId());
+			subcategories.add(subDto);
 			fillSubCategories(subDto, category.getId());
 		}
 		
@@ -327,16 +337,15 @@ public class CategoryService extends Service {
 
 	private String getPath(Category category) {
 		List<String> parentNames = new LinkedList<>();
-		Category parent;
-		do {
-			parent = getParent(category);
+		Category parent = category.getParent();
+		
+		while (parent != null) {
 			parentNames.add(parent.getName());
-		} while (parent != null);
-		return null;
-	}
-
-	private Category getParent(Category category) {
-		// TODO Auto-generated method stub
-		return null;
+			parent = parent.getParent();
+		}
+		
+		parentNames.add(category.getName());
+	
+		return String.join("\\", parentNames);
 	}
 }

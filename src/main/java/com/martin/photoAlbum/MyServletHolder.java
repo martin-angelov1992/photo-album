@@ -23,7 +23,13 @@ public class MyServletHolder extends ServletHolder {
 			throws ServletException, UnavailableException, IOException {
 		EntityTransaction tx = Data.getInstance().getEntityManager().getTransaction();
 		tx.begin();
-		super.handle(baseRequest, request, response);
+		try {
+			super.handle(baseRequest, request, response);
+		} catch (Exception e) {
+			tx.rollback();
+			e.printStackTrace();
+			return;
+		}
 		tx.commit();
 	}
 

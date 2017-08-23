@@ -1,14 +1,13 @@
 package com.martin.photoAlbum.requesthandlers;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
-
-import org.jboss.logging.Param;
 
 import com.martin.photoAlbum.business.CategoryService;
 import com.martin.photoAlbum.business.CategoryService.AddCategoryResult;
@@ -60,15 +59,16 @@ public class CategoryApiService extends ApiService<CategoryService> {
 	}
 	
 	@POST
-	public Response add(@Param String name) {
+	public Response add(@FormParam("name") String name, @FormParam("parentId") Integer parentId) {
 		updateSession();
-		AddCategoryResult result = service.add(name);
+		AddCategoryResult result = service.add(name, parentId);
 		
 		return Response.status(200).entity(result.getNewId()).build();
 	}
 	
 	@PUT
-	public Response edit(@PathParam("id") int id, @Param String newName) {
+	@Path("/{id}")
+	public Response edit(@PathParam("id") int id, @FormParam("newName") String newName) {
 		updateSession();
 
 		Category category = service.getById(id);
