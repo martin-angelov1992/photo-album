@@ -186,11 +186,23 @@ public class CategoryService extends Service {
 
 	public void renameParentCategory(String name, String newName) {
 		EntityManager em = Data.getInstance().getEntityManager();
-		Query q = em.createQuery(
-				"SELECT c FROM Category c WHERE name = :name AND c.parent IS NULL");
-		q.setParameter("name", name);
 		
-		Category category = (Category)q.getSingleResult();
+		Query q1 = em.createQuery(
+				"SELECT c FROM Category c WHERE c.name = :name AND c.parent IS NULL and c.owner IS NOT NULL order by c.owner.id desc");
+		q1.setParameter("name", name);
+		
+		System.out.println(q1.getResultList());
+		System.out.println("name="+name);
+		System.out.println("account="+session.getAccount().getId());
+		System.out.println("categoryOwner="+((Category)q1.getResultList().get(0)).getOwner().getId());
+		
+		Query q = em.createQuery(
+				"SELECT c FROM Category c WHERE c.name = :name AND c.parent IS NULL and c.owner IS NOT NULL "
+				+ "and c.owner.id=:ownerId");
+		q.setParameter("name", name);
+		q.setParameter("ownerId", session.getAccount().getId());
+		
+		Category category = (Category)q.getResultList().get(0);
 		
 		category.setName(newName);
 		

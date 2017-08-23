@@ -43,6 +43,9 @@ public class AccountService extends Service {
 		}
 		
 		Account acc = saveAccount(username, password, email, name);
+		login(username, password);
+
+		session.setAccount(acc);
 		categoryService.add(name);
 		
 		return new RegisterResult(RegisterStatus.OK, acc);
@@ -53,7 +56,7 @@ public class AccountService extends Service {
 			return false;
 		}
 		
-		return username.matches("[a-zA-Z0-9]");
+		return username.matches("[a-zA-Z0-9]+");
 	}
 
 	private boolean validPassword(String password) {
@@ -155,7 +158,7 @@ public class AccountService extends Service {
 		account.setName(name);
 		account.setPassHash(passHash);
 		
-		Data.getInstance().getEntityManager().persist(account);
+		Data.getInstance().getEntityManager().merge(account);
 		
 		return EditProfileResult.OK;
 	}

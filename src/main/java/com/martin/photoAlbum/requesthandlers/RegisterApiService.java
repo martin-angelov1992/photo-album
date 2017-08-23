@@ -35,9 +35,12 @@ public class RegisterApiService extends ApiService<AccountService> {
 		
 		RegisterResult result = service.register(username, password, email, name);
 		
+		
 		if (result.getStatus() != RegisterStatus.OK) {
 			return Response.status(400).entity(result.getStatus()).build();
 		}
+		
+		webRequest.getSession().setAttribute("accId", result.getAccount().getId());
 		
     	return Response.status(200).entity(result.getAccount()).build();
     }
