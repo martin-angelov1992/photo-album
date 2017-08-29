@@ -18,6 +18,8 @@
 			$(window).on('hashchange', function() {
 				var hash = window.location.hash;
 				
+				console.log("hash changed to "+hash);
+				
 				requestInfo = getRequestInfo(hash);
 				populateContent(requestInfo.page);
 			});
@@ -31,16 +33,30 @@
 			});
 			
 			function openPage(page) {
+				console.log("opening page "+page);
 				populateContent(page);
 				runContentScript(page)
 			}
 			
 			function populateContent(page) {
+				console.log("populating content for page "+page);
 				$("#content").load(page+".html");
+				replaceContentClass(page);
 				runContentScript(page);
 			}
-			
+
+			function replaceContentClass(page) {
+				$('#content').removeClass(function(i, c) {
+					var matches = c.match(/page\-content\-/g);
+					
+					return matches ? matches.join(" ") : '';
+				});
+				
+				$('#content').addClass("page-content-"+page);
+			}
+
 			function runContentScript(page) {
+				console.log("loading js for page "+page);
 				$.getScript("js/"+page+".js", function() {
 					  var functionName = pageToJSFunctionName(page);
 					  
@@ -91,6 +107,8 @@
 			}
 			
 			function getRequestInfo(hash) {
+				hash = hash.substring(1);
+				
 				var parts = hash.split("?");
 				
 				var info = {};
