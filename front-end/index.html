@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<script type="text/javascript" src="/front-end/js/jquery-3.2.1.min.js"></script>
 		<script type="text/javascript">
 			var pages = ["login", "register", 
 				         "photos", "photo", 
@@ -17,6 +18,8 @@
 			$(window).on('hashchange', function() {
 				var hash = window.location.hash;
 				
+				console.log("hash changed to "+hash);
+				
 				requestInfo = getRequestInfo(hash);
 				populateContent(requestInfo.page);
 			});
@@ -30,16 +33,30 @@
 			});
 			
 			function openPage(page) {
+				console.log("opening page "+page);
 				populateContent(page);
 				runContentScript(page)
 			}
 			
 			function populateContent(page) {
+				console.log("populating content for page "+page);
 				$("#content").load(page+".html");
+				replaceContentClass(page);
 				runContentScript(page);
 			}
-			
+
+			function replaceContentClass(page) {
+				$('#content').removeClass(function(i, c) {
+					var matches = c.match(/page\-content\-/g);
+					
+					return matches ? matches.join(" ") : '';
+				});
+				
+				$('#content').addClass("page-content-"+page);
+			}
+
 			function runContentScript(page) {
+				console.log("loading js for page "+page);
 				$.getScript("js/"+page+".js", function() {
 					  var functionName = pageToJSFunctionName(page);
 					  
@@ -69,7 +86,7 @@
 			}
 			
 			function populateProfileNav() {
-				$.getJSON( "session", function(sessionInfo) {
+				$.getJSON( "/session", function(sessionInfo) {
 					if (sessionInfo.loggedIn) {
 						populateLoggedInProfileNav(sessionInfo.account);
 					} else {
@@ -79,14 +96,19 @@
 			}
 			
 			function populateLoggedInProfileNav(account) {
-				
+				var content = "<a href='#login'>Login</a> | <a href='#register'>Register</a>";
+				$("#profile-nav").html(content);
 			}
 			
 			function populateNotLoggedInProfileNav() {
-				
+				var content = "<a href='#edit-profile'>Profile</a> | <a href=''>Change Password</a>"+
+				" | <a href='#create-category'>Create Category</a> | <a href='#upload-profile'>Upload Photo</a>";
+				$("#profile-nav").html(content);
 			}
 			
 			function getRequestInfo(hash) {
+				hash = hash.substring(1);
+				
 				var parts = hash.split("?");
 				
 				var info = {};
@@ -168,7 +190,7 @@
 		</script>
 	</head>
 	<body>
-		<div id="header"><span id="photos-link"></span> | <span id="profile-nav"></span></div>
+		<div id="header"><span id="profile-nav"></span></div>
 			<div id="content"></div>
 		<div id="footer"></div>
 	</body>
