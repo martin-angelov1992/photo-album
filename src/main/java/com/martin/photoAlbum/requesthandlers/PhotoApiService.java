@@ -5,18 +5,19 @@ import java.io.InputStream;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.martin.photoAlbum.business.PhotoService;
 import com.martin.photoAlbum.business.PhotoService.AddResult;
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
 
 @Path("/manage-photo")
 public class PhotoApiService extends ApiService<PhotoService> {
@@ -31,9 +32,10 @@ public class PhotoApiService extends ApiService<PhotoService> {
 
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response add(int categoryID, String name, String description, 
-			@FormDataParam("file") InputStream uploadedInputStream,
-			@FormDataParam("file") FormDataContentDisposition fileDetail) {
+	public Response add(@FormDataParam("categoryID") int categoryID, 
+			@FormDataParam("name") String name, 
+			@FormDataParam("description") String description, 
+			@FormDataParam("file") InputStream uploadedInputStream) {
 		updateSession();
 		
 		AddResult result;
@@ -45,15 +47,18 @@ public class PhotoApiService extends ApiService<PhotoService> {
 			return Response.status(500).build();
 		}
 		
-		if (result != AddResult.OK) {
+		if (result.getStatus() != AddResult.Status.OK) {
 			return Response.status(403).entity(result).build();
 		}
 		
-		return Response.ok().build();
+		return Response.ok().entity(result.getId()).build();
 	}
 	
 	@PUT
-	public Response edit(int id, String name, String description) {
+	@Path("/{id}")
+	public Response edit(@PathParam("id") int id, 
+			@FormParam("name") String name, 
+			@FormParam("description") String description) {
 		updateSession();
 		
 		service.edit(id, name, description);
@@ -61,7 +66,8 @@ public class PhotoApiService extends ApiService<PhotoService> {
 	}
 	
 	@DELETE
-	public Response delete(int id) {
+	@Path("/{id}")
+	public Response delete(@PathParam("id") int id) {
 		updateSession();
 		return null;
 	}

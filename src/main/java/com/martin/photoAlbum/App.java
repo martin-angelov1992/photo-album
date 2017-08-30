@@ -19,6 +19,7 @@ public class App
         HashSessionManager manager = new HashSessionManager();
         SessionHandler sessions = new SessionHandler(manager);
         ResourceConfig config = new ResourceConfig();
+        config.register(org.glassfish.jersey.media.multipart.MultiPartFeature.class);
         config.packages("com.martin.photoAlbum.requesthandlers");
         ServletHolder servlet = new MyServletHolder(new ServletContainer(config));
 

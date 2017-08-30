@@ -42,13 +42,32 @@ public class PhotoService extends Service {
 
 	}
 
-	public enum AddResult {
-		NOT_LOGGED_IN, CATEGORY_DOES_NOT_EXIST, OK
+	public static class AddResult {
+		public enum Status {NOT_LOGGED_IN, CATEGORY_DOES_NOT_EXIST, OK}
+		
+		private Status status;
+		private int id;
+		
+		public AddResult(Status status) {
+			this.status = status;
+		}
+		
+		public void setId(int id) {
+			this.id = id;
+		}
+
+		public Status getStatus() {
+			return status;
+		}
+
+		public int getId() {
+			return id;
+		}		
 	}
 	
 	public AddResult add(int categoryID, String name, String description, byte[] photoContent) {
 		if (!session.isLoggedIn()) {
-			return AddResult.NOT_LOGGED_IN;
+			return new AddResult(AddResult.Status.NOT_LOGGED_IN);
 		}
 		
 		EntityManager em = Data.getInstance().getEntityManager();
@@ -56,10 +75,10 @@ public class PhotoService extends Service {
 		Category category = em.find(Category.class, categoryID);
 		
 		if (category == null) {
-			return AddResult.CATEGORY_DOES_NOT_EXIST;
+			return new AddResult(AddResult.Status.CATEGORY_DOES_NOT_EXIST);
 		}
 		
-		byte[] thumbnailBytes = generateThumbnail(photoContent);
+		byte[] thumbnailBytes = new byte[0];//generateThumbnail(photoContent);
 		
 		Photo photo = new Photo();
 		photo.setDateAdded(new Date());
@@ -74,7 +93,10 @@ public class PhotoService extends Service {
 		
 		em.persist(category);
 		
-		return AddResult.OK;
+		AddResult result = new AddResult(AddResult.Status.OK);
+		result.setId(photo.getId());
+		
+		return result;
 	}
 	
 	private byte[] generateThumbnail(byte[] photoContent) {
