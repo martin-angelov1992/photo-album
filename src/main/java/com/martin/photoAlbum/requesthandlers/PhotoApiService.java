@@ -18,6 +18,8 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.martin.photoAlbum.business.PhotoService;
 import com.martin.photoAlbum.business.PhotoService.AddResult;
+import com.martin.photoAlbum.business.PhotoService.DeleteResult;
+import com.martin.photoAlbum.business.PhotoService.EditResult;
 
 @Path("/manage-photo")
 public class PhotoApiService extends ApiService<PhotoService> {
@@ -60,15 +62,27 @@ public class PhotoApiService extends ApiService<PhotoService> {
 			@FormParam("name") String name, 
 			@FormParam("description") String description) {
 		updateSession();
+
+		EditResult result = service.edit(id, name, description);
 		
-		service.edit(id, name, description);
-		return null;
+		if (result != EditResult.OK) {
+			return Response.status(403).entity(result).build();
+		}
+
+		return Response.ok().build();
 	}
 	
 	@DELETE
 	@Path("/{id}")
 	public Response delete(@PathParam("id") int id) {
 		updateSession();
-		return null;
+
+		DeleteResult result = service.delete(id);
+
+		if (result != DeleteResult.OK) {
+			return Response.status(403).entity(result).build();
+		}
+
+		return Response.ok().build();
 	}
 }

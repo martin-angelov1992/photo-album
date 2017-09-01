@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<link rel="stylesheet" type="text/css" href="/front-end/css/common.css">
 		<script type="text/javascript" src="/front-end/js/jquery-3.2.1.min.js"></script>
 		<script type="text/javascript">
 			var pages = ["login", "register", 
@@ -46,11 +47,12 @@
 			}
 
 			function replaceContentClass(page) {
-				$('#content').removeClass(function(i, c) {
-					var matches = c.match(/page\-content\-/g);
-					
-					return matches ? matches.join(" ") : '';
-				});
+				var classList = document.getElementById('content').className.split(/\s+/);
+				for (var i = 0; i < classList.length; i++) {
+				    if (classList[i].startsWith("page-content-")) {
+				        $('#content').removeClass(classList[i]);
+				    }
+				}
 				
 				$('#content').addClass("page-content-"+page);
 			}
@@ -87,6 +89,7 @@
 			
 			function populateProfileNav() {
 				$.getJSON( "/session", function(sessionInfo) {
+					console.log("session: %o", sessionInfo);
 					if (sessionInfo.loggedIn) {
 						populateLoggedInProfileNav(sessionInfo.account);
 					} else {
@@ -96,13 +99,13 @@
 			}
 			
 			function populateLoggedInProfileNav(account) {
-				var content = "<a href='#login'>Login</a> | <a href='#register'>Register</a>";
+				var content = "<a href='#edit-profile'>Profile</a> | <a href='#change-password'>Change Password</a>"+
+				" | <a href='#create-category'>Create Category</a> | <a href='#upload-photo'>Upload Photo</a>";
 				$("#profile-nav").html(content);
 			}
 			
-			function populateNotLoggedInProfileNav() {
-				var content = "<a href='#edit-profile'>Profile</a> | <a href=''>Change Password</a>"+
-				" | <a href='#create-category'>Create Category</a> | <a href='#upload-profile'>Upload Photo</a>";
+			function populateNotLoggedInProfileNav() {				
+				var content = "<a href='#login'>Login</a> | <a href='#register'>Register</a>";
 				$("#profile-nav").html(content);
 			}
 			

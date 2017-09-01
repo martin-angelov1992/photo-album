@@ -128,7 +128,8 @@ public class PhotoService extends Service {
         g2d.drawImage(thumbnail, 0, 0, null);
         g2d.dispose();
         
-        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
         try {
 			ImageIO.write(tmpImage, "jpg", baos );
 		} catch (IOException e) {
@@ -136,6 +137,7 @@ public class PhotoService extends Service {
 			e.printStackTrace();
 			return null;
 		}
+
         byte[] imageInByte = baos.toByteArray();
 		
 		return imageInByte;

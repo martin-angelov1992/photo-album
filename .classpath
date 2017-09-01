@@ -28,6 +28,5 @@
 	<classpathentry kind="lib" path="C:/my/derbyclient.jar"/>
 	<classpathentry kind="lib" path="C:/my/derbynet.jar"/>
 	<classpathentry kind="lib" path="C:/my/eclipselink.jar"/>
-	<classpathentry kind="lib" path="C:/my/jmagick.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

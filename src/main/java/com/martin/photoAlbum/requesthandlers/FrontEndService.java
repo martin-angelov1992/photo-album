@@ -7,14 +7,12 @@ import javax.servlet.http.HttpServlet;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 
 @Path("/front-end")
-@Produces(MediaType.TEXT_HTML)
 public class FrontEndService extends HttpServlet {
 
 	/**
@@ -25,7 +23,20 @@ public class FrontEndService extends HttpServlet {
 	@GET
 	@Path("/{request : .+}")
 	public Response handle(@PathParam("request") String request) throws IOException {
+		String mediType = getMediaType(request);
 		String content = IOUtils.toString(new FileReader("front-end/"+request));
-		return Response.status(200).entity(content).build();
+		return Response.status(200).type(mediType).entity(content).build();
+	}
+
+	private String getMediaType(String request) {
+		String parts[] = request.split("\\.");
+
+		String extension = parts[parts.length-1];
+		
+		if ("css".equals(extension)) {
+			return "text/css";
+		}
+
+		return MediaType.TEXT_HTML;
 	}
 }

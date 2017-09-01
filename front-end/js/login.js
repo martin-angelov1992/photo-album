@@ -1,8 +1,10 @@
-$(document).on("click", "#loginBtn", function() {
+$(document).on("click", "#loginBtn", function(e) {
+	e.preventDefault();
 	tryLogin();
 });
 
 function tryLogin() {
+	console.log("Trying to login.");
 	var username = $("#usernameField").val();
 	var password = $("#passwordField").val();
 	
@@ -11,17 +13,13 @@ function tryLogin() {
 
 function tryLoginWithCredentials(username, password) {
 	$("#loginError").html("");
-	$.getJSON( "login", {
+	$.post( "/login", {
 		username: username,
 		password: password
-	}, function( response ) {
-		var account = response.account;
-		
-		if (account == null) {
-			reportFailedLogin();
-		} else {
-			handleSuccessfulLogin(account);
-		}
+	}, function( account) {
+		handleSuccessfulLogin(account);
+	}).fail(function(response, status, xhr) {
+		reportFailedLogin();
 	});
 }
 

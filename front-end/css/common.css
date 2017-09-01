@@ -3,6 +3,13 @@
 	margin-top:100px
 }
 
-.page-content-edit-profile {
+.page-content-edit-profile, 
+.page-content-change-password, 
+.page-content-edit-category, 
+.page-content-edit-photo,
+.page-content-edit-profile,
+.page-content-register,
+.page-content-login,
+.page-content-upload-photo {
 	width:200px;
 }
