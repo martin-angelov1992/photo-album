@@ -10,7 +10,7 @@ import com.martin.photoAlbum.business.PhotoService;
 import com.martin.photoAlbum.entities.Photo;
 
 @Path("/photo")
-@Produces("image/png")
+@Produces("image/jpg")
 public class ImageApiService extends ApiService<PhotoService> {
 	/**
 	 * 

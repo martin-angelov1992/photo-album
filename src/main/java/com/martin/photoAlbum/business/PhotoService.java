@@ -1,9 +1,16 @@
 package com.martin.photoAlbum.business;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -19,9 +26,6 @@ import com.martin.photoAlbum.entities.Photo;
 
 import dto.PathDto;
 import dto.PhotoDto;
-import magick.ImageInfo;
-import magick.MagickException;
-import magick.MagickImage;
 
 public class PhotoService extends Service {
 	public PhotoService(Session session) {
@@ -78,7 +82,7 @@ public class PhotoService extends Service {
 			return new AddResult(AddResult.Status.CATEGORY_DOES_NOT_EXIST);
 		}
 		
-		byte[] thumbnailBytes = new byte[0];//generateThumbnail(photoContent);
+		byte[] thumbnailBytes = generateThumbnail(photoContent);
 		
 		Photo photo = new Photo();
 		photo.setDateAdded(new Date());
@@ -100,19 +104,41 @@ public class PhotoService extends Service {
 	}
 	
 	private byte[] generateThumbnail(byte[] photoContent) {
+		ByteArrayInputStream bis = new ByteArrayInputStream(photoContent);
+		ResizeInfo resizeInfo;
+	
+		BufferedImage bImg;
 		try {
-			MagickImage image = new MagickImage(new ImageInfo(), photoContent);
-			
-			ResizeInfo resizeInfo;
-				resizeInfo = getResizeInfo(image.getDimension().getHeight(), image.getDimension().getWidth());
-			
-			MagickImage thumbnail = image.scaleImage(resizeInfo.width, resizeInfo.height);
-			return thumbnail.imageToBlob(new ImageInfo());
-		} catch (MagickException e) {
+			bImg = ImageIO.read(bis);
+		} catch (IOException e) {
 			logger.error("Unable to create thumbnail.");
 			e.printStackTrace();
 			return null;
 		}
+		resizeInfo = getResizeInfo(bImg.getHeight(), bImg.getWidth());
+		Image thumbnail = bImg.getScaledInstance(resizeInfo.width, resizeInfo.height, Image.SCALE_SMOOTH);
+		
+		BufferedImage tmpImage =
+				    new BufferedImage(
+				      resizeInfo.height,
+				      resizeInfo.height,
+				      BufferedImage.TYPE_3BYTE_BGR);
+		
+		Graphics2D g2d = tmpImage.createGraphics();
+        g2d.drawImage(thumbnail, 0, 0, null);
+        g2d.dispose();
+        
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        try {
+			ImageIO.write(tmpImage, "jpg", baos );
+		} catch (IOException e) {
+			logger.error("Unable to create thumbnail.");
+			e.printStackTrace();
+			return null;
+		}
+        byte[] imageInByte = baos.toByteArray();
+		
+		return imageInByte;
 	}
 	
 	private ResizeInfo getResizeInfo(double height, double width) {
