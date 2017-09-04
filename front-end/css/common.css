@@ -10,6 +10,7 @@
 .page-content-edit-profile,
 .page-content-register,
 .page-content-login,
-.page-content-upload-photo {
+.page-content-upload-photo,
+.page-content-create-category {
 	width:200px;
 }

@@ -31,8 +31,6 @@ public class RegisterApiService extends ApiService<AccountService> {
     		 			     @FormParam("password") String password, 
     		 			     @FormParam("email") String email, 
     		 			     @FormParam("name") String name) {
-		updateSession();
-		
 		RegisterResult result = service.register(username, password, email, name);
 		
 		

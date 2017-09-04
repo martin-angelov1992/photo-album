@@ -10,8 +10,15 @@
 				         "edit-profile", "edit-photo",
 				         "edit-category"];
 			
-			$(document).on("click", "#logout", function() {
-				
+			$(document).on("click", "#logout", function(e) {
+				e.preventDefault();
+				$.ajax({
+				    url: '/logout',
+				    type: 'PUT',
+				    success: function(result) {
+				    	populateNotLoggedInProfileNav();
+				    }
+				});
 			});
 			
 			var requestInfo = null;
@@ -33,10 +40,25 @@
 				populateContent(requestInfo.page);
 			});
 			
+			$(document).on("submit", "form", function(e) {
+				e.preventDefault();
+			});
+			
 			function openPage(page) {
 				console.log("opening page "+page);
+				setHashCode(page);
 				populateContent(page);
 				runContentScript(page)
+			}
+			
+			function setHashCode(page) {
+				var hash = "#"+page;
+				if(history.pushState) {
+				    history.pushState(null, null, hash);
+				}
+				else {
+				    location.hash = hash;
+				}
 			}
 			
 			function populateContent(page) {
@@ -98,14 +120,17 @@
 				});
 			}
 			
+			var homeLink = "<a href='#categories'>Home</a> | ";
+			
 			function populateLoggedInProfileNav(account) {
-				var content = "<a href='#edit-profile'>Profile</a> | <a href='#change-password'>Change Password</a>"+
-				" | <a href='#create-category'>Create Category</a> | <a href='#upload-photo'>Upload Photo</a>";
+				var content = homeLink + "<a href='#edit-profile'>Profile</a> | <a href='#change-password'>Change Password</a>"+
+				" | <a href='#create-category'>Create Category</a> | <a href='#upload-photo'>Upload Photo</a> | "+
+				"<a href='#logout' id='logout'>Logout</a>";
 				$("#profile-nav").html(content);
 			}
 			
 			function populateNotLoggedInProfileNav() {				
-				var content = "<a href='#login'>Login</a> | <a href='#register'>Register</a>";
+				var content = homeLink + "<a href='#login'>Login</a> | <a href='#register'>Register</a>";
 				$("#profile-nav").html(content);
 			}
 			

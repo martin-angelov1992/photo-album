@@ -1,5 +1,6 @@
 package com.martin.photoAlbum.requesthandlers;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
@@ -39,5 +40,10 @@ public class ApiService<T extends Service> extends HttpServlet {
 	
 	protected void updateSession() {
 		service.setSession(getSession());
+	}
+
+	@Context
+	public void setServletContext(ServletContext servletContext) {
+		updateSession();
 	}
 }

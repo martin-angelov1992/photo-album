@@ -28,7 +28,6 @@ public class CategoryApiService extends ApiService<CategoryService> {
 	@GET
 	@Path("/{id}")
 	public Response get(@PathParam("id") int id) {
-		updateSession();
 		CategoryDto category = service.getDtoById(id);
 		
 		if (category == null) {
@@ -41,8 +40,6 @@ public class CategoryApiService extends ApiService<CategoryService> {
 	@DELETE
 	@Path("/{id}")
 	public Response delete(@PathParam("id") int id) {
-		updateSession();
-
 		Category category = service.getById(id);
 		
 		if (category == null) {
@@ -60,7 +57,6 @@ public class CategoryApiService extends ApiService<CategoryService> {
 	
 	@POST
 	public Response add(@FormParam("name") String name, @FormParam("parentId") Integer parentId) {
-		updateSession();
 		AddCategoryResult result = service.add(name, parentId);
 		
 		return Response.status(200).entity(result.getNewId()).build();
@@ -69,8 +65,6 @@ public class CategoryApiService extends ApiService<CategoryService> {
 	@PUT
 	@Path("/{id}")
 	public Response edit(@PathParam("id") int id, @FormParam("newName") String newName) {
-		updateSession();
-
 		Category category = service.getById(id);
 		
 		if (category == null) {

@@ -38,8 +38,6 @@ public class PhotoApiService extends ApiService<PhotoService> {
 			@FormDataParam("name") String name, 
 			@FormDataParam("description") String description, 
 			@FormDataParam("file") InputStream uploadedInputStream) {
-		updateSession();
-		
 		AddResult result;
 		
 		try {
@@ -61,8 +59,6 @@ public class PhotoApiService extends ApiService<PhotoService> {
 	public Response edit(@PathParam("id") int id, 
 			@FormParam("name") String name, 
 			@FormParam("description") String description) {
-		updateSession();
-
 		EditResult result = service.edit(id, name, description);
 		
 		if (result != EditResult.OK) {
@@ -75,8 +71,6 @@ public class PhotoApiService extends ApiService<PhotoService> {
 	@DELETE
 	@Path("/{id}")
 	public Response delete(@PathParam("id") int id) {
-		updateSession();
-
 		DeleteResult result = service.delete(id);
 
 		if (result != DeleteResult.OK) {

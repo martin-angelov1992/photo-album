@@ -1,5 +1,6 @@
 package com.martin.photoAlbum.requesthandlers;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -24,7 +25,13 @@ public class FrontEndService extends HttpServlet {
 	@Path("/{request : .+}")
 	public Response handle(@PathParam("request") String request) throws IOException {
 		String mediType = getMediaType(request);
-		String content = IOUtils.toString(new FileReader("front-end/"+request));
+		File file = new File("front-end/"+request);
+		
+		String content = "";
+		if (file.exists()) {
+			content = IOUtils.toString(new FileReader(file));	
+		}
+		
 		return Response.status(200).type(mediType).entity(content).build();
 	}
 

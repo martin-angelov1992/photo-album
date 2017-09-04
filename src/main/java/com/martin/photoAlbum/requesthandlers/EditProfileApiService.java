@@ -27,7 +27,6 @@ public class EditProfileApiService extends ApiService<AccountService> {
 	
 	@GET
 	public Response get() {
-		updateSession();
 		Session session = getSession();
 		
 		if (!session.isLoggedIn()) {
@@ -36,18 +35,11 @@ public class EditProfileApiService extends ApiService<AccountService> {
 		
 		return Response.status(200).entity(session.getAccount()).build();
 	}
-	
+
 	@PUT
-	public Response update(@FormParam("password") String password, @FormParam("email") String email, 
+	public Response update(@FormParam("email") String email, 
 			@FormParam("name") String name) {
-		updateSession();
-		Session session = getSession();
-		
-		if (!session.isLoggedIn()) {
-			return Response.status(403).entity("NOT_LOGGED_IN").build();
-		}
-		
-		EditProfileResult result = service.editProfile(password, email, name);
+		EditProfileResult result = service.editProfile(email, name);
 		
 		if (result != EditProfileResult.OK) {
 			return Response.status(403).entity(result).build();

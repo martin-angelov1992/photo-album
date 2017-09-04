@@ -1,4 +1,4 @@
-$.getScript( "category-operations.js" );
+$.getScript( "js\category-operations.js" );
 
 function populateEditCategory() {
 	populateParentCategories();

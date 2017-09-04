@@ -130,17 +130,36 @@ public class AccountService extends Service {
 	public void logout() {
 		
 	}
-	
-	public EditProfileResult editProfile(String password, String email, String name) {
+
+	public static enum ChangePasswordResult {
+		NOT_LOGGED_IN, INVALID_PASSWORD, OK
+	}
+
+	public ChangePasswordResult changePassword(String password) {
+		if (!session.isLoggedIn()) {
+			return ChangePasswordResult.NOT_LOGGED_IN;
+		}
+		
+		if (!validPassword(password)) {
+			return ChangePasswordResult.INVALID_PASSWORD;
+		}
+		
+		Account account = session.getAccount();
+
+		String passHash = hash(password);
+		account.setPassHash(passHash);
+		
+		Data.getInstance().getEntityManager().merge(account);
+		
+		return ChangePasswordResult.OK;
+	}
+
+	public EditProfileResult editProfile(String email, String name) {
 		if (!session.isLoggedIn()) {
 			return EditProfileResult.NOT_LOGGED_IN;
 		}
 		
 		Account account = session.getAccount();
-		
-		if (!validPassword(password)) {
-			return EditProfileResult.INVALID_PASSWORD;
-		}
 		
 		if (!validEmail(email)) {
 			return EditProfileResult.INVALID_EMAIL;
@@ -152,11 +171,8 @@ public class AccountService extends Service {
 		
 		categoryService.renameParentCategory(account.getName(), name);
 		
-		String passHash = hash(password);
-		
 		account.setMail(email);
 		account.setName(name);
-		account.setPassHash(passHash);
 		
 		Data.getInstance().getEntityManager().merge(account);
 		

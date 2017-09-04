@@ -23,7 +23,6 @@ public class LoginApiService extends ApiService<AccountService> {
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	public Response login(@FormParam("username") String username, 
 			@FormParam("password") String password) {
-		updateSession();
 		Account account = service.login(username, password);
 		
 		if (account == null) {
