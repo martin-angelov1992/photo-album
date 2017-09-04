@@ -4,16 +4,16 @@ var errorMap = {
 	};
 
 function populatePhotos() {
-	var requestInfo = getRequestInfo(hash);
-	var id = requestInfo.id;
-	
-	showCategory(id);
+	var requestInfo = getRequestInfo(window.location.hash);
+	var categoryId = requestInfo.categoryId;
+	$.getJSON("/category/"+categoryId, function(category) {
+		showCategory(category);
+	});
 }
 
 function deletePhoto(id) {
 	$.ajax({
-	    url: '/photo',
-	    data: {id: id},
+	    url: '/photo/'+id,
 	    type: 'DELETE',
 	    success: function(result) {
 	    	var status = result.status;
@@ -31,10 +31,6 @@ function removePhoto(id) {
 	$("[data-photo-id='"+id+"']").remove();
 }
 
-function getCategory(id) {
-	
-}
-
 $(document).on("click", "[data-delete-photo]", function(e) {
 	e.preventDefault();
 
@@ -49,24 +45,39 @@ $(document).on("click", "[data-delete-photo]", function(e) {
 	deletePhoto(id);
 });
 
-function showCategory(id) {
-	var category = getCategory(id);
-	
-	showSubCategories(category);
+function showCategory(category) {
+	$("#categoryWrapper #categoryName").text(category.name);
+	$("#categoryWrapper #ownerName").text(category.owner);
+
+	if (category.subCategories.length == 0) {
+		$("#categoryWrapper").append("<div class='category'>None</div>");
+	} else {
+		showSubCategories(category);
+	}
+
 	showThumbnails(category);
 }
 
-function showSubCategories(category, containerId) {
+function showSubCategories(category, parentId) {
+	console.log("Showing category: %o", category);
 	var subCategories = category.subCategories;
 
+	var wrapperId = null;
+	
+	if (!parentId) {
+		wrapperId = "#categoryWrapper";
+	} else {
+		wrapperId = "#subCategory_"+parentId;
+	}
+	
 	for (i in subCategories) {
 		var subCategory = subCategories[i];
-		var newContainerId = containerId+"_"+subCategory.id;
 		
-		$("#"+categoryId).append("<div id='"+newCategoryId+"' class='category'><h3>"+escapeHtml(category)+"</h3></div>");
+		$(wrapperId).append("<div id='subCategory_"+subCategory.id+"' class='category'><a href='#photos?categoryId="+
+				subCategory.id+"'>"+escapeHtml(subCategory.name)+"</div>");
 		
-		showThumbnails(subCategory, newCategoryId)
-		showSubCategories(subCategory, newContainerId);
+		showThumbnails(subCategory, subCategory.id)
+		showSubCategories(subCategory, subCategory.id);
 	}
 }
 
@@ -86,6 +97,6 @@ function getEditHTML(thumbnail) {
 		return "";
 	}
 	
-	return '<h4><a href="#editPhoto?id="'+thumbnail.id+'">(edit)</a> | <a href="#" data-delete-photo="'
+	return '<h4><a href="#edit-photo?id="'+thumbnail.id+'">(edit)</a> | <a href="#" data-delete-photo="'
 	+thumbail.id+'">(delete)</a></h4>';
 }

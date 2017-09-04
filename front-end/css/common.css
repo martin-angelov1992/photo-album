@@ -3,6 +3,10 @@
 	margin-top:100px
 }
 
+.categoryWrapper {
+	margin-left: 20px;
+}
+
 .page-content-edit-profile, 
 .page-content-change-password, 
 .page-content-edit-category, 
@@ -12,4 +16,8 @@
 .page-content-login,
 .page-content-upload-photo {
 	width:200px;
+}
+
+.category {
+	clear:both;
 }
