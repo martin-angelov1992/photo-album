@@ -16,11 +16,11 @@ $(document).ready(function(e) {
 	});
 });
 
-$(document).on("click", "#editProfileForm", function(e) {
+$(document).on("submit", "#editProfileForm", function(e) {
 	var name = $("#name").val();
 	var email = $("#email").val();
 
-	$.post({url: "/profile", 
+	$.ajax({url: "/profile", 
 		email: email,
 		type: "PUT",
 		name: name,	
