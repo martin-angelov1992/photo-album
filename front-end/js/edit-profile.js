@@ -14,21 +14,23 @@ $(document).ready(function(e) {
 		
 		return response;
 	});
-});
 
-$(document).on("submit", "#editProfileForm", function(e) {
-	var name = $("#name").val();
-	var email = $("#email").val();
+	$("#editProfileForm").submit(function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		var name = $("#name").val();
+		var email = $("#email").val();
 
-	$.ajax({url: "/profile", 
-		email: email,
-		type: "PUT",
-		name: name,	
-		success: function() {
-			alert("Edit Successful!")
-			openPage("categories");
-		}}).fail(function(response, status, xhr) {
-			reportEditError(response.responseJSON);
+		$.ajax({url: "/profile",
+			type: "PUT",
+			data: {name: name, email: email},
+			success: function() {
+				alert("Edit Successful!")
+				openPage("categories");
+			}}).fail(function(response, status, xhr) {
+				reportEditError(response.responseJSON);
+		})
 	})
 });
 

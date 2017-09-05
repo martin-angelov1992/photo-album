@@ -22,3 +22,8 @@
 .category {
 	clear:both;
 }
+
+#passwordError {
+	clear:both;
+	float:left;
+}

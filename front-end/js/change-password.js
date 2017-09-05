@@ -1,4 +1,4 @@
-$(document).on("click", "#submit", function() {
+$(document).on("submit", "#changePasswordForm", function() {
 	tryChangePassword();
 });
 

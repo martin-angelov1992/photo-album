@@ -149,8 +149,6 @@ public class AccountService extends Service {
 		String passHash = hash(password);
 		account.setPassHash(passHash);
 		
-		Data.getInstance().getEntityManager().merge(account);
-		
 		return ChangePasswordResult.OK;
 	}
 
@@ -173,8 +171,6 @@ public class AccountService extends Service {
 		
 		account.setMail(email);
 		account.setName(name);
-		
-		Data.getInstance().getEntityManager().merge(account);
 		
 		return EditProfileResult.OK;
 	}

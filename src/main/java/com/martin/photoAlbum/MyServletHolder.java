@@ -2,6 +2,7 @@ package com.martin.photoAlbum;
 
 import java.io.IOException;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -21,7 +22,9 @@ public class MyServletHolder extends ServletHolder {
 	@Override
 	public void handle(Request baseRequest, ServletRequest request, ServletResponse response)
 			throws ServletException, UnavailableException, IOException {
-		EntityTransaction tx = Data.getInstance().getEntityManager().getTransaction();
+		EntityManager em = Data.getInstance().getEntityManager();
+
+		EntityTransaction tx = em.getTransaction();
 		tx.begin();
 		try {
 			super.handle(baseRequest, request, response);
@@ -32,5 +35,4 @@ public class MyServletHolder extends ServletHolder {
 		}
 		tx.commit();
 	}
-
 }
