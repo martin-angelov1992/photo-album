@@ -5,6 +5,7 @@ import java.util.List;
 public class CategoryDto {
 	private int id;
 	private String owner;
+	private int ownerId;
 	private String name;
 	private List<CategoryDto> subCategories;
 	private List<ThumbnailDto> thumbnails;
@@ -47,5 +48,13 @@ public class CategoryDto {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public int getOwnerId() {
+		return ownerId;
+	}
+
+	public void setOwnerId(int ownerId) {
+		this.ownerId = ownerId;
 	}
 }

@@ -4,38 +4,30 @@ function populateCreateCategory() {
 	populateParentCategories();
 }
 
-$(document).on("click", "#submit", function() {
+$("#createCategoryForm").submit(function(e) {
+	e.preventDefault();
 	tryCreate();
 });
 
 function tryCreate() {
-	var name = $("#name");
-	var parent = $("#parent");
+	var name = $("#name").val();
+	var parent = $("#parent").val();
 	$("#errorHolder").text("");
-	$.post("category", {name: name, parent: parent}, function(response) {
-		var errorCode = response.errorCode;
-		
-		if (errorCode) {
-			showError(errorCode);
-			return;
-		}
-		
-		var newId = response.newId;
-		openPage("photos/"+newId);
+	$.post("/category", {name: name, parent: parent}, function(newId) {
+		openPage("photos", "categoryId="+newId);
+	}).fail(function(errorCode, status, xhr) {
+		showError(errorCode);
 	});
 }
 
-
 function populateParentCategories() {
-	var categories = getAllCategories();
 	populateParents();
 }
 
 function populateParents() {
-	$.getJSON( "category/all", {}, 
-		function( response ) {
-			var categories = response.categories;
-			
+	addNoParentOption();
+	$.getJSON( "/category", {}, 
+		function(categories) {
 			for (i in categories) {
 				var category = categories[i];
 				
@@ -43,6 +35,11 @@ function populateParents() {
 			}
 		}
 	);
+}
+
+function addNoParentOption() {
+	$("#parentsHolder").append("<input type='radio' name='parent' value='none' checked='checked'/> "
+			+ "<i>No Parent</i><br>");
 }
 
 function populateParent(category) {

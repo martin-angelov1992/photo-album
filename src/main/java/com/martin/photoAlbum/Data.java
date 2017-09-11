@@ -9,6 +9,7 @@ public class Data {
 	private static final String PERSISTENCE_UNIT_NAME = "photoalbum";
 	private ThreadLocal<EntityManager> emThreadLocal = new ThreadLocal<EntityManager>() {
 	    @Override protected EntityManager initialValue() {
+	    	System.out.println("Creating entity manager.");
 	        return emf.createEntityManager();
 	    }
 	};
@@ -30,5 +31,9 @@ public class Data {
 		}
 		
 		return instance;
+	}
+
+	public void createNewEM() {
+		emThreadLocal.set(emf.createEntityManager());
 	}
 }

@@ -3,11 +3,11 @@ var errorMap = {
 		notOwner: "Photo not found."
 	};
 
-function populatePhotos() {
+function populatePhotos(session) {
 	var requestInfo = getRequestInfo(window.location.hash);
 	var categoryId = requestInfo.categoryId;
 	$.getJSON("/category/"+categoryId, function(category) {
-		showCategory(category);
+		showCategory(category, session);
 	});
 }
 
@@ -45,9 +45,14 @@ $(document).on("click", "[data-delete-photo]", function(e) {
 	deletePhoto(id);
 });
 
-function showCategory(category) {
+function showCategory(category, session) {
 	$("#categoryWrapper #categoryName").text(category.name);
 	$("#categoryWrapper #ownerName").text(category.owner);
+
+	if (session.loggedIn && category.ownerId == session.account.id) {
+		console.log("Adding edit button");
+		addEditLink(category);
+	}
 
 	if (category.subCategories.length == 0) {
 		$("#categoryWrapper").append("<div class='category'>None</div>");
@@ -56,6 +61,11 @@ function showCategory(category) {
 	}
 
 	showThumbnails(category);
+}
+
+function addEditLink(category) {
+	$("#editPlaceholder").html("<a href='#edit-category?id="+
+			category.id+"'>Edit</a>");
 }
 
 function showSubCategories(category, parentId) {

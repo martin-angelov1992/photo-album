@@ -56,8 +56,15 @@ public class CategoryApiService extends ApiService<CategoryService> {
 	}
 	
 	@POST
-	public Response add(@FormParam("name") String name, @FormParam("parentId") Integer parentId) {
-		AddCategoryResult result = service.add(name, parentId);
+	public Response add(@FormParam("name") String name, @FormParam("parent") String parent) {
+		AddCategoryResult result;
+
+		if (parent == null || parent.equals("") || parent.equals("none")) {			
+			result = service.add(name);
+		} else {
+			Integer parentId = Integer.valueOf(parent);
+			result = service.add(name, parentId);
+		}
 		
 		return Response.status(200).entity(result.getNewId()).build();
 	}

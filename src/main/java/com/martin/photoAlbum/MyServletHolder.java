@@ -22,9 +22,13 @@ public class MyServletHolder extends ServletHolder {
 	@Override
 	public void handle(Request baseRequest, ServletRequest request, ServletResponse response)
 			throws ServletException, UnavailableException, IOException {
+		Data.getInstance().createNewEM();
+		
 		EntityManager em = Data.getInstance().getEntityManager();
 
 		EntityTransaction tx = em.getTransaction();
+
+		System.out.println("Starting transaction.");
 		tx.begin();
 		try {
 			super.handle(baseRequest, request, response);
@@ -33,6 +37,7 @@ public class MyServletHolder extends ServletHolder {
 			e.printStackTrace();
 			return;
 		}
+		System.out.println("Ending transaction");
 		tx.commit();
 	}
 }

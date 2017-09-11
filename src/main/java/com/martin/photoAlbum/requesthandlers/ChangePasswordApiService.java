@@ -24,7 +24,7 @@ public class ChangePasswordApiService extends ApiService<AccountService> {
 		ChangePasswordResult result = service.changePassword(password);
 
 		if (result == ChangePasswordResult.OK) {
-			return Response.ok().build();
+			return Response.ok().entity("OK").build();
 		}
 	
 		return Response.status(400).entity(result).build();

@@ -3,6 +3,7 @@ $(document).on("submit", "#changePasswordForm", function() {
 });
 
 function tryChangePassword() {
+	$("#passwordError").text("");
 	var password = $("#password").val();
 	var passwordAgain = $("#passwordAgain").val();
 	
@@ -28,9 +29,12 @@ function doChange(password) {
 }
 
 function sendChange(password) {
-	$.getJSON( "changePassword", {
-		password: password
-	}, function( response ) {
-		showPage("edit-profile");
+	$.ajax({url: "/change-password",
+		type: "PUT",
+		data: {password: password},
+		success: function() {
+			openPage("edit-profile");
+		}}).fail(function(response, status, xhr) {
+			showError("Password should be atleast 6 characters long.");
 	});
 }

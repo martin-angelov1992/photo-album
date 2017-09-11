@@ -27,7 +27,7 @@ public class EditProfileApiService extends ApiService<AccountService> {
 	
 	@GET
 	public Response get() {
-		System.out.println("Got it!");
+		System.out.println("In get!");
 		Session session = getSession();
 		
 		if (!session.isLoggedIn()) {
@@ -41,7 +41,7 @@ public class EditProfileApiService extends ApiService<AccountService> {
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	public Response update(@FormParam("email") String email, 
 			@FormParam("name") String name) {
-		System.out.println("Got it!");
+		System.out.println("In update!");
 		EditProfileResult result = service.editProfile(email, name);
 		
 		if (result != EditProfileResult.OK) {

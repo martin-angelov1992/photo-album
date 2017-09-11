@@ -66,13 +66,6 @@
 			<artifactId>jersey-container-jetty-http</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.derby/derby -->
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derby</artifactId>
-			<version>10.13.1.1</version>
-			<scope>test</scope>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-server -->
 		<dependency>
 			<groupId>com.sun.jersey</groupId>

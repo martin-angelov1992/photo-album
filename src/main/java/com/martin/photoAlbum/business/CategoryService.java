@@ -276,8 +276,9 @@ public class CategoryService extends Service {
 		
 		if (category.getOwner() != null) {
 			dto.setOwner(category.getOwner().getName());
+			dto.setOwnerId(category.getOwner().getId());
 		}
-		
+
 		dto.setId(id);
 		
 		fillSubCategories(dto, id);
@@ -325,7 +326,18 @@ public class CategoryService extends Service {
 		
 		return category;
 	}
-	
+
+	public CategoryWithPathDto getCategoryWithPath(int id) {
+		CategoryWithPathDto dto = new CategoryWithPathDto();
+		Category category = getById(id);
+
+		dto.setId(category.getId());
+		dto.setName(category.getName());
+		dto.setPath(getPath(category));
+
+		return dto;
+	}
+
 	public List<CategoryWithPathDto> getAll() {
 		EntityManager em = Data.getInstance().getEntityManager();
 		Query q = em.createQuery("SELECT c FROM Category c", Category.class);
@@ -338,9 +350,9 @@ public class CategoryService extends Service {
 			CategoryWithPathDto dto = new CategoryWithPathDto();
 			
 			dto.setId(category.getId());
-			dto.setName(dto.getName());
+			dto.setName(category.getName());
 			dto.setPath(getPath(category));
-			
+
 			dtos.add(dto);
 		}
 		

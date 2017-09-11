@@ -29,30 +29,42 @@
 				console.log("hash changed to "+hash);
 				
 				requestInfo = getRequestInfo(hash);
-				populateContent(requestInfo.page);
+
+				$.getJSON( "/session", function(session) {
+					populateContent(requestInfo.page, session);
+				});
 			});
 			
 			$(document).ready(function() {
 				var hash = window.location.hash;
 				requestInfo = getRequestInfo(hash);
-				
-				populateProfileNav();
-				populateContent(requestInfo.page);
+
+				$.getJSON( "/session", function(session) {
+					populateProfileNav(session);
+
+					populateContent(requestInfo.page, session);
+				});
 			});
 			
 			$(document).on("submit", "form", function(e) {
 				e.preventDefault();
 			});
 			
-			function openPage(page) {
+			function openPage(page, paramStr) {
 				console.log("opening page "+page);
-				setHashCode(page);
-				populateContent(page);
-				runContentScript(page)
+				setHashCode(page, paramStr);
+				$.getJSON( "/session", function(session) {
+					populateContent(page, session);
+				});
 			}
 			
-			function setHashCode(page) {
+			function setHashCode(page, paramStr) {
 				var hash = "#"+page;
+
+				if (paramStr) {
+					hash += "?"+paramStr;
+				}
+
 				if(history.pushState) {
 				    history.pushState(null, null, hash);
 				}
@@ -61,11 +73,11 @@
 				}
 			}
 			
-			function populateContent(page) {
+			function populateContent(page, session) {
 				console.log("populating content for page "+page);
 				$("#content").load(page+".html");
 				replaceContentClass(page);
-				runContentScript(page);
+				runContentScript(page, session);
 			}
 
 			function replaceContentClass(page) {
@@ -79,14 +91,14 @@
 				$('#content').addClass("page-content-"+page);
 			}
 
-			function runContentScript(page) {
+			function runContentScript(page, session) {
 				console.log("loading js for page "+page);
 				$.getScript("js/"+page+".js", function() {
 					  var functionName = pageToJSFunctionName(page);
 					  
 					  // If function exists
 					  if(typeof window[functionName] === 'function') {
-					  	  window[functionName]();
+					  	  window[functionName](session);
 					  }
 				});
 			}
@@ -104,20 +116,18 @@
 				
 				return "populate"+ucfirst(convertedPage);
 			}
-			
+
 			function ucfirst(string) {
 			    return string.charAt(0).toUpperCase() + string.slice(1);
 			}
-			
-			function populateProfileNav() {
-				$.getJSON( "/session", function(sessionInfo) {
-					console.log("session: %o", sessionInfo);
-					if (sessionInfo.loggedIn) {
-						populateLoggedInProfileNav(sessionInfo.account);
-					} else {
-						populateNotLoggedInProfileNav();
-					}
-				});
+
+			function populateProfileNav(sessionInfo) {
+				console.log("session: %o", sessionInfo);
+				if (sessionInfo.loggedIn) {
+					populateLoggedInProfileNav(sessionInfo.account);
+				} else {
+					populateNotLoggedInProfileNav();
+				}
 			}
 			
 			var homeLink = "<a href='#categories'>Home</a> | ";
