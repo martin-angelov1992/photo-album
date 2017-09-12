@@ -130,17 +130,16 @@
 				}
 			}
 			
-			var homeLink = "<a href='#categories'>Home</a> | ";
+			var commonLinks = "<a href='#categories'>Home</a> | <a href='#create-category'>Create Category</a> | <a href='#upload-photo'>Upload Photo</a> | ";
 			
 			function populateLoggedInProfileNav(account) {
-				var content = homeLink + "<a href='#edit-profile'>Profile</a> | <a href='#change-password'>Change Password</a>"+
-				" | <a href='#create-category'>Create Category</a> | <a href='#upload-photo'>Upload Photo</a> | "+
-				"<a href='#logout' id='logout'>Logout</a>";
+				var content = commonLinks + "<a href='#edit-profile'>Profile</a> | <a href='#change-password'>Change Password</a>"+
+				" | <a href='#logout' id='logout'>Logout</a>";
 				$("#profile-nav").html(content);
 			}
 			
 			function populateNotLoggedInProfileNav() {				
-				var content = homeLink + "<a href='#login'>Login</a> | <a href='#register'>Register</a>";
+				var content = commonLinks + "<a href='#login'>Login</a> | <a href='#register'>Register</a>";
 				$("#profile-nav").html(content);
 			}
 			

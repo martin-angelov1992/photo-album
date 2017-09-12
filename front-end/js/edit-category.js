@@ -1,7 +1,10 @@
-$.getScript( "js\category-operations.js" );
+$.getScript( "js/category-operations.js", function() {
+	$.getJSON("/category-with-path?id="+requestInfo.id, function(category) {
+		populateParentCategories();
+	});
+});
 
 function populateEditCategory() {
-	populateParentCategories();
 }
 
 $(document).on("click", "#submit", function() {

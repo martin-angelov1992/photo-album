@@ -4,6 +4,7 @@ public class CategoryWithPathDto {
 	private String name;
 	private int id;
 	private String path;
+	private Integer parentId;
 	
 	public String getName() {
 		return name;
@@ -22,5 +23,11 @@ public class CategoryWithPathDto {
 	}
 	public void setPath(String path) {
 		this.path = path;
+	}
+	public Integer getParentId() {
+		return parentId;
+	}
+	public void setParentId(Integer parentId) {
+		this.parentId = parentId;
 	}
 }
