@@ -1,6 +1,8 @@
 var errorMap = {
 	emptyName: "You cannot create a category with an empty name.",
-	illegalCharacter: "You have illegal character in your category name."
+	illegalCharacter: "You have illegal character in your category name.",
+	notLoggedIn: "You need to login, in order to edit categories.",
+	notOwner: "You are not owner of this category."
 };
 
 function populateParentCategories(parent) {
@@ -9,6 +11,7 @@ function populateParentCategories(parent) {
 
 function populateParents(parent) {
 	addNoParentOption(!parent);
+	console.log("Populating parents. Selected parent: "+parent);
 	$.getJSON( "/category", {}, 
 		function(categories) {
 			for (i in categories) {

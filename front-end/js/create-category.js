@@ -12,12 +12,12 @@ $("#createCategoryForm").submit(function(e) {
 
 function tryCreate() {
 	var name = $("#name").val();
-	var parent = $("#parent").val();
+	var parent = $('input[name=parent]:checked', '#createCategoryForm').val();
 	$("#errorHolder").text("");
 	$.post("/category", {name: name, parent: parent}, function(newId) {
 		openPage("photos", "categoryId="+newId);
 	}).fail(function(errorCode, status, xhr) {
-		showError(errorCode);
+		showError(errorCode.responseJSON);
 	});
 }
 

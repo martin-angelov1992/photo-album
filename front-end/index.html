@@ -218,9 +218,13 @@
 			}
 		
 			function showError(errorCode) {
-				var errorKey = convertConstantToKey(constant);
+				console.log("Showing error with code: "+errorCode);
+				var errorKey = convertConstantToKey(errorCode);
+				console.log("Error key is: "+errorKey);
 				
-				var errorText = errorMap[errorCode];
+				var errorText = errorMap[errorKey];
+
+				console.log("Showing error: "+errorText);
 		
 				$("#errorHolder").text(errorText);
 			}

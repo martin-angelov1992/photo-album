@@ -3,14 +3,15 @@ package com.martin.photoAlbum.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 @Entity
 public class Category extends Item {
-	@OneToMany(mappedBy="parent")
+	@OneToMany(mappedBy="parent", cascade=CascadeType.REMOVE)
 	private Set<Category> subCategories;
-	@OneToMany
+	@OneToMany(cascade=CascadeType.REMOVE)
 	private Set<Photo> photos;
 	
 	public Category() {

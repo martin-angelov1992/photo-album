@@ -51,6 +51,7 @@ function showCategory(category, session) {
 
 	if (session.loggedIn && category.ownerId == session.account.id) {
 		console.log("Adding edit button");
+		addDeleteLink(category);
 		addEditLink(category);
 	}
 
@@ -61,6 +62,10 @@ function showCategory(category, session) {
 	}
 
 	showThumbnails(category);
+}
+
+function addDeleteLink(category) {
+	
 }
 
 function addEditLink(category) {

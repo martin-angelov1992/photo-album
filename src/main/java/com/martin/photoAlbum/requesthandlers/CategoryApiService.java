@@ -13,6 +13,7 @@ import com.martin.photoAlbum.business.CategoryService;
 import com.martin.photoAlbum.business.CategoryService.AddCategoryResult;
 import com.martin.photoAlbum.business.CategoryService.DeleteResult;
 import com.martin.photoAlbum.business.CategoryService.EditResult;
+import com.martin.photoAlbum.business.CategoryService.ErrorCode;
 import com.martin.photoAlbum.entities.Category;
 
 import dto.CategoryDto;
@@ -65,20 +66,30 @@ public class CategoryApiService extends ApiService<CategoryService> {
 			Integer parentId = Integer.valueOf(parent);
 			result = service.add(name, parentId);
 		}
-		
+
+		if (result.getErrorCode() != ErrorCode.OK) {
+			return Response.status(403).entity(result.getErrorCode()).build();
+		}
+
 		return Response.status(200).entity(result.getNewId()).build();
 	}
 	
 	@PUT
 	@Path("/{id}")
-	public Response edit(@PathParam("id") int id, @FormParam("newName") String newName) {
+	public Response edit(@PathParam("id") int id, @FormParam("newName") String newName, @FormParam("parent") String parent) {
 		Category category = service.getById(id);
 		
 		if (category == null) {
 			return Response.status(404).build();
 		}
-		
-		EditResult result = service.edit(id, newName);
+
+		Integer parentId = null;
+
+		if (parent != null && !parent.equals("") && !parent.equals("none")) {
+			parentId = Integer.valueOf(parent);
+		}
+
+		EditResult result = service.edit(id, newName, parentId);
 		
 		if (result != EditResult.OK) {
 			return Response.status(403).entity(result).build();

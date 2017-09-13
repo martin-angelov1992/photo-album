@@ -121,7 +121,7 @@ public class CategoryService extends Service {
 		return category.getId();
 	}
 
-	public EditResult edit(int id, String newName) {
+	public EditResult edit(int id, String newName, Integer parentId) {
 		EntityManager em = Data.getInstance().getEntityManager();
 		
 		Category category = getById(id);
@@ -137,7 +137,13 @@ public class CategoryService extends Service {
 		if (!isOwner(session.getAccount(), category)) {
 			return EditResult.NOT_OWNER;
 		}
-		
+
+		if (parentId == null) {
+			category.setParent(null);
+		} else {
+			category.setParent(getById(parentId));
+		}
+
 		category.setName(newName);
 		
 		em.persist(category);
@@ -335,6 +341,10 @@ public class CategoryService extends Service {
 		dto.setName(category.getName());
 		dto.setPath(getPath(category));
 
+		if (category.getParent() != null) {
+			dto.setParentId(category.getParent().getId());
+		}
+
 		return dto;
 	}
 
@@ -352,6 +362,10 @@ public class CategoryService extends Service {
 			dto.setId(category.getId());
 			dto.setName(category.getName());
 			dto.setPath(getPath(category));
+
+			if (category.getParent() != null) {
+				dto.setParentId(category.getParent().getId());
+			}
 
 			dtos.add(dto);
 		}

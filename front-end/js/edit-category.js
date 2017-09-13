@@ -1,6 +1,8 @@
 $.getScript( "js/category-operations.js", function() {
-	$.getJSON("/category-with-path?id="+requestInfo.id, function(category) {
-		populateParentCategories();
+	$.getJSON("/category-with-path/"+requestInfo.id, function(category) {
+		populateParentCategories(category.parentId);
+		$("#newName").val(category.name)
+		$("#pathHolder").text("Path: "+category.path);
 	});
 });
 
@@ -12,18 +14,15 @@ $(document).on("click", "#submit", function() {
 });
 
 function tryEdit() {
-	var name = $("#name");
-	var categoryId = $("#categoryId");
+	var name = $("#newName").val();
+	var categoryId = requestInfo.id;
+	var parent = $('input[name=parent]:checked', '#editCategoryForm').val();
 	$("#errorHolder").text("");
-	$.post("category", {id: categoryId, name: name}, function(response) {
-		var errorCode = response.errorCode;
-		
-		if (errorCode) {
-			showError(errorCode);
-			return;
-		}
-		
-		var newId = response.newId;
-		openPage("photos/"+newId);
+	$.ajax({url: "/category/"+categoryId, data: {newName: name, parent: parent}, 
+		method: "PUT",
+		success: function() {
+			openPage("photos", "categoryId="+categoryId);
+	}}).fail(function(response, status, xhr) {
+		showError(response.responseJSON);
 	});
 }
