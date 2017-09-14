@@ -41,14 +41,16 @@ public class PhotoApiService extends ApiService<PhotoService> {
 		AddResult result;
 		
 		try {
-			result = service.add(categoryID, name, description, IOUtils.toByteArray(uploadedInputStream));
+			byte[] bytes = IOUtils.toByteArray(uploadedInputStream);
+			
+			result = service.add(categoryID, name, description, bytes);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return Response.status(500).build();
 		}
 		
 		if (result.getStatus() != AddResult.Status.OK) {
-			return Response.status(403).entity(result).build();
+			return Response.status(403).entity(result.getStatus()).build();
 		}
 		
 		return Response.ok().entity(result.getId()).build();

@@ -1,6 +1,7 @@
 var errorMap = {
 		notLoggedIn: "You need to login in order to upload photos.", 
-		categoryDoesNotExist: "This category no longer exists."}
+		categoryDoesNotExist: "This category no longer exists.",
+		noPhotoSelected: "No photo selected."
 }
 
 $(document).ready(function() {
@@ -13,6 +14,8 @@ $(document).ready(function() {
 		}
 	});
 
+	
+	$("#errorHolder").html("");
 	$("#uploadPhotoForm").submit(function(e) {
 		e.preventDefault();
 		
@@ -21,7 +24,12 @@ $(document).ready(function() {
 		var name = $("#name").val();
 		var description = $("#description").val();
 		var category = $("#category").val();
-		var file = $("#file").val();
+		var file = $("#file")[0].files[0];
+		
+		if (!file) {
+			showError("NO_PHOTO_SELECTED");
+			return;
+		}
 
 		formData.append('file', file, file.name);
 		formData.append('name', name);
@@ -32,8 +40,9 @@ $(document).ready(function() {
 		xhr.onload = function () {
 		  if (xhr.status === 200) {
 			  $("#submit").html('Submit');
+			  openPage("photos", "categoryId="+category);
 		  } else {
-			  showError("");
+			  showError(xhr.responseText);
 		  }
 		};
 		

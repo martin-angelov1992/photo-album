@@ -18,6 +18,7 @@ import com.martin.photoAlbum.entities.Photo;
 import dto.CategoryDto;
 import dto.CategoryWithPathDto;
 import dto.SimpleCategory;
+import dto.ThumbnailDto;
 
 public class CategoryService extends Service {
 
@@ -298,6 +299,22 @@ public class CategoryService extends Service {
 		
 		Query q = em.createQuery("SELECT p FROM Photo p WHERE p.parent.id=:parentId", Photo.class);
 		q.setParameter("parentId", categoryId);
+
+		List<Photo> photos = q.getResultList();
+
+		for (Photo photo : photos) {
+			dto.getThumbnails().add(createThumbnailDto(photo));
+		}
+	}
+
+	private ThumbnailDto createThumbnailDto(Photo photo) {
+		ThumbnailDto dto = new ThumbnailDto();
+		
+		dto.setId(photo.getId());
+		dto.setName(photo.getName());
+		dto.setOwnerID(photo.getOwner().getId());
+
+		return dto;
 	}
 
 	private void fillSubCategories(CategoryDto dto, int categoryId) {

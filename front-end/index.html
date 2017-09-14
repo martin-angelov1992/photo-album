@@ -219,7 +219,7 @@
 		
 			function showError(errorCode) {
 				console.log("Showing error with code: "+errorCode);
-				var errorKey = convertConstantToKey(errorCode);
+				var errorKey = stripEndQuotes(convertConstantToKey(errorCode));
 				console.log("Error key is: "+errorKey);
 				
 				var errorText = errorMap[errorKey];
@@ -227,6 +227,21 @@
 				console.log("Showing error: "+errorText);
 		
 				$("#errorHolder").text(errorText);
+			}
+
+			function stripEndQuotes(s){
+				var t=s.length;
+				if (s.charAt(0)=='"') s=s.substring(1,t--);
+				if (s.charAt(--t)=='"') s=s.substring(0,t);
+				return s;
+			}
+
+			function alertError(errorCode) {
+				var errorKey = stripEndQuotes(convertConstantToKey(errorCode));
+				
+				var errorText = errorMap[errorKey];
+		
+				alert(errorText);
 			}
 		</script>
 	</head>

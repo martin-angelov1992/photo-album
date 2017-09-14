@@ -47,7 +47,7 @@ public class PhotoService extends Service {
 	}
 
 	public static class AddResult {
-		public enum Status {NOT_LOGGED_IN, CATEGORY_DOES_NOT_EXIST, OK}
+		public enum Status {NOT_LOGGED_IN, CATEGORY_DOES_NOT_EXIST, NO_PHOTO_SELECTED, OK}
 		
 		private Status status;
 		private int id;
@@ -72,6 +72,10 @@ public class PhotoService extends Service {
 	public AddResult add(int categoryID, String name, String description, byte[] photoContent) {
 		if (!session.isLoggedIn()) {
 			return new AddResult(AddResult.Status.NOT_LOGGED_IN);
+		}
+		
+		if (photoContent == null || photoContent.length == 0) {
+			return new AddResult(AddResult.Status.NO_PHOTO_SELECTED);
 		}
 		
 		EntityManager em = Data.getInstance().getEntityManager();

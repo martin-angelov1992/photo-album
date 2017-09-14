@@ -31,6 +31,23 @@ function removePhoto(id) {
 	$("[data-photo-id='"+id+"']").remove();
 }
 
+$(document).on("click", "[data-delete-category]", function(e) {
+	e.preventDefault();
+	
+	if (!confirm("Are you sure you want to delete this category?")) {
+		return false;
+	}
+
+	$.ajax({url: "/category/"+$(this).attr("data-delete-category"),
+		type: "DELETE",
+		data: {},
+		success: function() {
+			openPage("categories");
+		}}).fail(function(response, status, xhr) {
+			alertError(response.responseJSON);
+	})
+});
+
 $(document).on("click", "[data-delete-photo]", function(e) {
 	e.preventDefault();
 
@@ -51,8 +68,7 @@ function showCategory(category, session) {
 
 	if (session.loggedIn && category.ownerId == session.account.id) {
 		console.log("Adding edit button");
-		addDeleteLink(category);
-		addEditLink(category);
+		addManageLinks(category);
 	}
 
 	if (category.subCategories.length == 0) {
@@ -64,12 +80,8 @@ function showCategory(category, session) {
 	showThumbnails(category);
 }
 
-function addDeleteLink(category) {
-	
-}
-
-function addEditLink(category) {
-	$("#editPlaceholder").html("<a href='#edit-category?id="+
+function addManageLinks(category) {
+	$("#manageHolder").html("<a href='#' data-delete-category='"+category.id+"'>Delete</a> | <a href='#edit-category?id="+
 			category.id+"'>Edit</a>");
 }
 
