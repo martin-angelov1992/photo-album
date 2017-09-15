@@ -312,7 +312,10 @@ public class CategoryService extends Service {
 		
 		dto.setId(photo.getId());
 		dto.setName(photo.getName());
-		dto.setOwnerID(photo.getOwner().getId());
+
+		if (photo.getOwner() != null) {
+			dto.setOwnerID(photo.getOwner().getId());
+		}
 
 		return dto;
 	}

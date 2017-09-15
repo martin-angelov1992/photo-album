@@ -13,17 +13,13 @@ function populatePhotos(session) {
 
 function deletePhoto(id) {
 	$.ajax({
-	    url: '/photo/'+id,
+	    url: '/manage-photo/'+id,
 	    type: 'DELETE',
 	    success: function(result) {
-	    	var status = result.status;
-	    	
-	    	if (status == "OK" || status == "PHOTO_NOT_FOUND") {
-	    		removePhoto(id);
-	    	} else {
-	    		showError(status)
-	    	}
+	    	removePhoto(id);
 	    }
+	}).fail(function(response, status, xhr) {
+		alertError(response.responseJSON);
 	});
 }
 
@@ -53,9 +49,9 @@ $(document).on("click", "[data-delete-photo]", function(e) {
 
 	var id = $(this).attr("data-delete-photo");
 	
-	var confirm = alert("Are you sure you want to delete this photo?");
+	var answer = confirm("Are you sure you want to delete this photo?");
 	
-	if (!confirm) {
+	if (!answer) {
 		return;
 	}
 	
@@ -68,16 +64,16 @@ function showCategory(category, session) {
 
 	if (session.loggedIn && category.ownerId == session.account.id) {
 		console.log("Adding edit button");
-		addManageLinks(category);
+		addManageLinks(category, session);
 	}
 
 	if (category.subCategories.length == 0) {
 		$("#categoryWrapper").append("<div class='category'>None</div>");
 	} else {
-		showSubCategories(category);
+		showSubCategories(category, null, session);
 	}
 
-	showThumbnails(category);
+	showThumbnails(category, "#categoryWrapper", session);
 }
 
 function addManageLinks(category) {
@@ -85,7 +81,7 @@ function addManageLinks(category) {
 			category.id+"'>Edit</a>");
 }
 
-function showSubCategories(category, parentId) {
+function showSubCategories(category, parentId, session) {
 	console.log("Showing category: %o", category);
 	var subCategories = category.subCategories;
 
@@ -103,27 +99,29 @@ function showSubCategories(category, parentId) {
 		$(wrapperId).append("<div id='subCategory_"+subCategory.id+"' class='category'><a href='#photos?categoryId="+
 				subCategory.id+"'>"+escapeHtml(subCategory.name)+"</div>");
 		
-		showThumbnails(subCategory, subCategory.id)
-		showSubCategories(subCategory, subCategory.id);
+		showThumbnails(subCategory, subCategory.id, session);
+		showSubCategories(subCategory, wrapperId, session);
 	}
 }
 
-function showThumbnails(category, containerId) {
+function showThumbnails(category, containerId, session) {
 	var thumbnails = category.thumbnails;
 	
 	for (i in thumbnails) {
 		var thumbnail = thumbnails[i];
 
-		var editHTML = getEditHTML(thumbnail);
-		$("#"+categoryId).append("<div data-photo-id='"+thumbnail.id+"'><h4>"+escapeHtml(thumbnail.name)+"</h4>"+editHTML+"<img src='thumbnail/'"+thumbnail.id+"/></div>")
+		var editHTML = getEditHTML(thumbnail, session);
+		console.log("Showing thumbnail %o, in container "+containerId, thumbnail);
+		$(containerId).append("<div data-photo-id='"+thumbnail.id+"'><span>"+escapeHtml(thumbnail.name)+"</span>"+editHTML+
+				"<a href='#photo?id="+thumbnail.id+"'><img src='/thumbnail/"+thumbnail.id+"'/></a></div>")
 	}
 }
 
-function getEditHTML(thumbnail) {
+function getEditHTML(thumbnail, sessionInfo) {
 	if (!sessionInfo.loggedIn || thumbnail.ownerID != sessionInfo.account.id) {
 		return "";
 	}
 	
-	return '<h4><a href="#edit-photo?id="'+thumbnail.id+'">(edit)</a> | <a href="#" data-delete-photo="'
-	+thumbail.id+'">(delete)</a></h4>';
+	return '<h4><a href="#edit-photo?id='+thumbnail.id+'">(edit)</a> | <a href="#" data-delete-photo="'
+	+thumbnail.id+'">(delete)</a></h4>';
 }

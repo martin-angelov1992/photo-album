@@ -6,28 +6,35 @@ var errorMap = {
 	};
 
 function populateEditPhoto() {
-	photoId = requestInfo.id;
-	$.getJSON( "photo/"+photoId, {}, function( response ) {
-		var photo = response.photo;
-		pupulatePhotoDetails(photo);
+	var photoId = requestInfo.id;
+	$.getJSON( "/manage-photo/"+photoId, {}, function( photo ) {
+		console.log("Populating photo: %o", photo);
+		populatePhotoDetails(photo);
 	});
 }
 
-function populatePhotoDetails(photo) {
-	var name = $("#name");
-	var description = $("#description");
-	
-	$.post("photo/"+photoId, 
-			{name: name, description: description},
-			function (response) {
-				var errorCode = response.error;
-				
-				if (errorCode != null) {
-					showError(errorCode);
-					return;
-				}
-				
-				showPage("photo/id="+photoId);
-			});
-}
+$(document).ready(function() {
+	$("#editPhotoForm").submit(function(e){
+		e.preventDefault();
 
+		var name = $("#name").val();
+		var description = $("#description").val();
+
+		var photoId = requestInfo.id;
+
+
+		$.ajax({url: "/manage-photo/"+photoId,
+				type: "PUT",
+				data: {name: name, description: description},
+				success: function (response) {
+					openPage("photo", "id="+photoId);
+				}}).fail(function(response, status, xhr) {
+					showError(response.responseJSON);
+				});
+	});
+})
+
+function populatePhotoDetails(photo) {
+	$("#name").val(photo.name);
+	$("#description").val(photo.description);
+}

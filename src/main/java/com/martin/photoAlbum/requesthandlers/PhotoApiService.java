@@ -6,6 +6,7 @@ import java.io.InputStream;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -20,6 +21,8 @@ import com.martin.photoAlbum.business.PhotoService;
 import com.martin.photoAlbum.business.PhotoService.AddResult;
 import com.martin.photoAlbum.business.PhotoService.DeleteResult;
 import com.martin.photoAlbum.business.PhotoService.EditResult;
+
+import dto.PhotoDto;
 
 @Path("/manage-photo")
 public class PhotoApiService extends ApiService<PhotoService> {
@@ -80,5 +83,17 @@ public class PhotoApiService extends ApiService<PhotoService> {
 		}
 
 		return Response.ok().build();
+	}
+
+	@GET
+	@Path("/{id}")
+	public Response get(@PathParam("id") int id) {
+		PhotoDto photo = service.getDtoById(id);
+
+		if (photo == null) {
+			return Response.status(404).build();
+		}
+
+		return Response.ok().entity(photo).build();
 	}
 }

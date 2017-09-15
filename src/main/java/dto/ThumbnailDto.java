@@ -3,7 +3,7 @@ package dto;
 public class ThumbnailDto {
 	private int id;
 	private String name;
-	private int ownerID;
+	private Integer ownerID;
 
 	public int getId() {
 		return id;
@@ -21,11 +21,11 @@ public class ThumbnailDto {
 		this.name = name;
 	}
 
-	public int getOwnerID() {
+	public Integer getOwnerID() {
 		return ownerID;
 	}
 
-	public void setOwnerID(int ownerID) {
+	public void setOwnerID(Integer ownerID) {
 		this.ownerID = ownerID;
 	}
 }

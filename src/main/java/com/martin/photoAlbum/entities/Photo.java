@@ -2,6 +2,7 @@ package com.martin.photoAlbum.entities;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 
@@ -10,8 +11,10 @@ public class Photo extends Item {
 	private String description;
 	private Date dateAdded;
 	@Lob
+	@Column(length = 10 * 1024 * 1024)
 	private byte[] image;
 	@Lob
+	@Column(length = 3 * 1024 * 1024)
 	private byte[] thumbnail;
 
 	public String getDescription() {

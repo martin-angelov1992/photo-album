@@ -33,8 +33,8 @@ public class PhotoService extends Service {
 	}
 
 	private final static Logger logger = Logger.getLogger(CategoryService.class);
-	private static final int THUMBNAIL_MAX_WIDTH = 500;
-	private static final int THUMBNAIL_MAX_HEIGHT = 500;
+	private static final int THUMBNAIL_MAX_WIDTH = 230;
+	private static final int THUMBNAIL_MAX_HEIGHT = 230;
 	
 	public enum DeleteResult {
 		PHOTO_NOT_FOUND, NOT_LOGGED_IN, NOT_OWNER, OK
@@ -94,12 +94,10 @@ public class PhotoService extends Service {
 		photo.setName(name);
 		photo.setImage(photoContent);
 		photo.setThumbnail(thumbnailBytes);
-		
+		photo.setParent(category);
+		photo.setOwner(session.getAccount());
+
 		em.persist(photo);
-		
-		category.addPhoto(photo);
-		
-		em.persist(category);
 		
 		AddResult result = new AddResult(AddResult.Status.OK);
 		result.setId(photo.getId());
@@ -124,7 +122,7 @@ public class PhotoService extends Service {
 		
 		BufferedImage tmpImage =
 				    new BufferedImage(
-				      resizeInfo.height,
+				      resizeInfo.width,
 				      resizeInfo.height,
 				      BufferedImage.TYPE_3BYTE_BGR);
 		
@@ -152,8 +150,12 @@ public class PhotoService extends Service {
 		double widthRatio = THUMBNAIL_MAX_WIDTH/width;
 		
 		double scaleRatio = widthRatio < heightRatio ? widthRatio : heightRatio;
-		
-		return new ResizeInfo((int)Math.floor(scaleRatio*width), (int)Math.floor(scaleRatio*height));
+
+		int newWidth = (int)Math.floor(scaleRatio*width);
+		int newHeight = (int)Math.floor(scaleRatio*height);
+
+		System.out.println("Rezising to: ("+newWidth+", "+newHeight+")");
+		return new ResizeInfo(newWidth, newHeight);
 	}
 
 	public static class ResizeInfo {
@@ -215,6 +217,11 @@ public class PhotoService extends Service {
 
 	public PhotoDto getDtoById(int id) {
 		Photo photo = getById(id);
+
+		if (photo == null) {
+			return null;
+		}
+
 		return convert(photo);
 	}
 	

@@ -1,32 +1,29 @@
 function populatePhoto() {
-	var requestInfo = getRequestInfo(hash);
+	console.log("Starting to populate photo.");
 	var id = requestInfo.id;
 	
 	showPhoto(id);
 }
 
-function getPhoto(id) {
-	$.getJSON( "photo", {
-		id: id,
-	}, function( response ) {
-		var photo = response.photo;
-		
+function showPhoto(id) {
+	$.getJSON( "/manage-photo/"+id, function( photo ) {
+		console.log("Showing photo: %o", photo);
 		if (photo == null) {
 			showPhotoNotFound();
 			return;
 		}
 		
 		showPhotoPath(photo);
-		$("#photoName").text(photo.name);
-		$("#owner").text(photo.owner);
-		$("#description").text(photo.description);
-		$("#dateAdded").text(photo.dateAdded);
+		$("#photoName").html("Name: <i>"+photo.name+"</i>");
+		$("#owner").html("Owner: <i>"+photo.owner+"</i>");
+		$("#description").html("Description: <i>"+photo.description+"</i>");
+		$("#dateAdded").html("Date Added: <i>"+photo.dateAdded+"</i>");
 		addImage(photo.id);
 	});
 }
 
 function addImage(id) {
-	var imageHtml = "<img src='image="+id+"'/>";
+	var imageHtml = "<img src='/photo/"+id+"'/>";
 	
 	$("#photoPlaceholder").html(imageHtml);
 }

@@ -27,3 +27,9 @@
 	clear:both;
 	float:left;
 }
+
+div[data-photo-id] {
+	margin: 10px;
+	border-style: outset;
+	float: left;
+}
