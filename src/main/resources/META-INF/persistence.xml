@@ -3,6 +3,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
 	version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
 	<persistence-unit name="photoalbum" transaction-type="RESOURCE_LOCAL">
+	<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>com.martin.photoAlbum.entities.Photo</class>
 		<class>com.martin.photoAlbum.entities.Account</class>
 		<properties>
