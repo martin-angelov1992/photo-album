@@ -1,6 +1,7 @@
 package com.martin.photoAlbum.entities;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.Lob;
 @Entity
 public class Photo extends Item {
 	private String description;
+	private List<Face> faces;
 	private Date dateAdded;
 	@Lob
 	@Column(length = 10 * 1024 * 1024)
@@ -47,5 +49,13 @@ public class Photo extends Item {
 
 	public void setThumbnail(byte[] thumbnail) {
 		this.thumbnail = thumbnail;
+	}
+
+	public List<Face> getFaces() {
+		return faces;
+	}
+
+	public void setFaces(List<Face> faces) {
+		this.faces = faces;
 	}
 }

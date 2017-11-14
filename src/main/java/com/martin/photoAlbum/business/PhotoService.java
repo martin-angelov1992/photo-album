@@ -28,6 +28,8 @@ import dto.PathDto;
 import dto.PhotoDto;
 
 public class PhotoService extends Service {
+	private FaceService faceService = new FaceService();
+
 	public PhotoService(Session session) {
 		super(session);
 	}
@@ -96,6 +98,7 @@ public class PhotoService extends Service {
 		photo.setThumbnail(thumbnailBytes);
 		photo.setParent(category);
 		photo.setOwner(session.getAccount());
+		handleFaces(photo);
 
 		em.persist(photo);
 		
@@ -105,6 +108,10 @@ public class PhotoService extends Service {
 		return result;
 	}
 	
+	private void handleFaces(Photo photo) {
+		
+	}
+
 	private byte[] generateThumbnail(byte[] photoContent) {
 		ByteArrayInputStream bis = new ByteArrayInputStream(photoContent);
 		ResizeInfo resizeInfo;
