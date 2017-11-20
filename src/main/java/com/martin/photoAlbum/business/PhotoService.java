@@ -109,7 +109,7 @@ public class PhotoService extends Service {
 	}
 	
 	private void handleFaces(Photo photo) {
-		
+		faceService.handleFaces(photo);
 	}
 
 	private byte[] generateThumbnail(byte[] photoContent) {
