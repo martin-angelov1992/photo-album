@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 
 import com.martin.photoAlbum.Data;
 import com.martin.photoAlbum.Session;
+import com.martin.photoAlbum.business.facerecognition.FaceService;
 import com.martin.photoAlbum.entities.Account;
 import com.martin.photoAlbum.entities.Category;
 import com.martin.photoAlbum.entities.Item;
