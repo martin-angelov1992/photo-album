@@ -150,10 +150,14 @@ public class FaceService {
 
 		Rectangle intersection = getIntersection(bigger, smaller);
 
-		double intersectionSize = intersection.getSize();
-		double smallerFaceSize = smaller.getRectangle().getSize();
+		if (intersection == null) {
+			return false;
+		}
 
-		return intersectionSize*2 > smallerFaceSize;
+		double intersectionSize = intersection.getSize();
+		double biggerFaceSize = bigger.getRectangle().getSize();
+
+		return intersectionSize*2 > biggerFaceSize;
 	}
 
 	private Rectangle getIntersection(Face bigger, Face smaller) {
@@ -165,6 +169,10 @@ public class FaceService {
 
 		if (allPoints.size() == 3) {
 			allPoints = find4PointsFrom3(allPoints);
+		}
+
+		if (allPoints.size() == 0) {
+			return null;
 		}
 
 		return findRectangleByPoints(allPoints);
@@ -238,8 +246,8 @@ public class FaceService {
 	private List<Point> getOtherPointsFromOposite(List<Point> oppositePoints) {
 		List<Point> otherPoints = new ArrayList<>(2);
 
-		Point p1 = otherPoints.get(0);
-		Point p2 = otherPoints.get(1);
+		Point p1 = oppositePoints.get(0);
+		Point p2 = oppositePoints.get(1);
 
 		otherPoints.add(new Point(p1.getX(), p2.getY()));
 		otherPoints.add(new Point(p2.getX(), p1.getY()));
@@ -252,7 +260,7 @@ public class FaceService {
 
 		for (int i=0;i<points.size();++i) {
 			Point point1 = points.get(i);
-			for (int j=i+1;j<points.size();++i) {
+			for (int j=i+1;j<points.size();++j) {
 				Point point2 = points.get(j);
 
 				if (point1.getX() != point2.getX() && point1.getY() != point2.getY()) {
@@ -289,31 +297,48 @@ public class FaceService {
 		List<Point> points = new LinkedList<>();
 
 		List<Point> biggerPoints = bigger.getRectangle().getAllPoints();
-		List<Point> smallerPoints = bigger.getRectangle().getAllPoints();
+		List<Point> smallerPoints = smaller.getRectangle().getAllPoints();
 
-		int i;
-		int j;
-		boolean result = false;
 		for (Point smallerPoint : smallerPoints) {
-			for (i = 0, j = biggerPoints.size() - 1; i < biggerPoints.size(); j = i++) {
-				Point iPoint = biggerPoints.get(i);
-				Point jPoint = biggerPoints.get(j);
-				if ((iPoint.getY() > smallerPoint.getY()) != 
-						(jPoint.getY() > smallerPoint.getY()) &&
-						(smallerPoint.getX() < (jPoint.getX() - iPoint.getX()) * 
-						(smallerPoint.getY() - iPoint.getY()) / 
-						(jPoint.getY()-iPoint.getY()) + iPoint.getX())) {
-					result = !result;
-				}
-			}
-
-			if (result) {
+			if (contains(smallerPoint, biggerPoints)) {
 				points.add(smallerPoint);
-				result = false;
 			}
 		}
 
 		return points;
+	}
+
+	private boolean contains(Point point, List<Point> polygon) {
+		int i;
+		int j;
+		boolean result = false;
+		for (i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++) {
+			Point iPoint = polygon.get(i);
+			Point jPoint = polygon.get(j);
+			if ((iPoint.getY() > point.getY()) != 
+					(jPoint.getY() > point.getY()) &&
+					(point.getX() < (jPoint.getX() - iPoint.getX()) * 
+					(point.getY() - iPoint.getY()) / 
+					(jPoint.getY()-iPoint.getY()) + iPoint.getX())) {
+				result = !result;
+			}
+		}
+
+		String polygonStr = polygonToString(polygon);
+
+		System.out.println(String.format("%s point is not in %s polygon", point, polygonStr));
+		
+		return result;
+	}
+
+	private String polygonToString(List<Point> polygon) {
+		List<String> pointStrings = new ArrayList<>(polygon.size());
+
+		for (Point point : polygon) {
+			pointStrings.add(point.toString());
+		}
+
+		return String.join(", ", pointStrings);
 	}
 
 	private boolean contains(Face bigger, Face smaller) {

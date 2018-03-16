@@ -56,6 +56,10 @@ public class Point {
 		return true;
 	}
 
+	public String toString() {
+		return String.format("(%d,%d)", x, y);
+	}
+
 	public Point clone() {
 		return new Point(x, y);
 	}

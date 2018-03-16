@@ -22,13 +22,13 @@ public class FaceServiceTest extends TestCase {
 		outerFace.setRectangle(new Rectangle(new Point(220, 145), new Point(260, 170)));
 
 		Face sameFace1 = new Face();
-		sameFace1.setRectangle(new Rectangle(new Point(150, 40), new Point(210, 100)));
+		sameFace1.setRectangle(new Rectangle(new Point(70, 40), new Point(210, 230)));
 
 		Face sameFace2 = new Face();
-		sameFace2.setRectangle(new Rectangle(new Point(150, 120), new Point(210, 170)));
+		sameFace2.setRectangle(new Rectangle(new Point(75, 42), new Point(210, 300)));
 
 		Face lowerRightFace = new Face();
-		lowerRightFace.setRectangle(new Rectangle(new Point(176, 142), new Point(213, 195)));
+		lowerRightFace.setRectangle(new Rectangle(new Point(176, 142), new Point(313, 495)));
 
 		Face rightFace = new Face();
 		rightFace.setRectangle(new Rectangle(new Point(185, 50), new Point(209, 215)));

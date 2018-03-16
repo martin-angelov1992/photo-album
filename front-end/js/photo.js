@@ -54,7 +54,7 @@ function handleFace(face) {
 }
 
 $(document).on("click", ".face", function() {
-	
+	var input = "<input name/>";
 })
 
 function addImage(id) {

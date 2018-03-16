@@ -117,7 +117,7 @@ public class Rectangle {
 	        // Line CD represented as a2x + b2y = c2
 	        double a2 = side.pointB.getY() - side.pointA.getY();
 	        double b2 = side.pointA.getX() - side.pointB.getX();
-	        double c2 = a2*pointA.getX()+ b2*pointA.getY();
+	        double c2 = a2*side.pointA.getX()+ b2*side.pointA.getY();
 	      
 	        double determinant = a1*b2 - a2*b1;
 	      
@@ -138,6 +138,8 @@ public class Rectangle {
 	            	return new Point(x, y);
 	            }
 
+	            System.out.println(String.format("intersection point is: (%d,%d)", x, y));
+	            System.out.println(String.format("%s line does not intersect with %s", this, side));
 	            return null;
 	        }
 		}
@@ -145,14 +147,18 @@ public class Rectangle {
 		private boolean isBetween(int i, int i1, int i2) {
 			return (i >= i1 && i <= i2) || (i >= i2 && i <= i1);
 		}
+
+		public String toString() {
+			return String.format("(%d,%d)-(%d,%d)", pointA.getX(), pointA.getY(), pointB.getX(), pointB.getY());
+		}
 	}
 
 	public List<Point> getAllPoints() {
 		List<Point> points = new ArrayList<>(4);
 
 		points.add(pointA);
-		points.add(pointB);
 		points.add(new Point(pointA.getX(), pointB.getY()));
+		points.add(pointB);
 		points.add(new Point(pointB.getX(), pointA.getY()));
 
 		return points;
