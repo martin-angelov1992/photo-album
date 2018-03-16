@@ -6,10 +6,12 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Photo extends Item {
 	private String description;
+	@OneToMany(mappedBy="photo")
 	private List<Face> faces;
 	private Date dateAdded;
 	@Lob

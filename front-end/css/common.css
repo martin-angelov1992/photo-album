@@ -33,3 +33,11 @@ div[data-photo-id] {
 	border-style: outset;
 	float: left;
 }
+
+.face {
+	border: 3px solid rgba(125,125,125,.2);
+}
+
+.face:hover {
+	border: 3px solid rgba(125,125,125,.6);
+}

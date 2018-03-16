@@ -2,6 +2,8 @@ package com.martin.photoAlbum.business;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -9,6 +11,9 @@ import javax.persistence.Query;
 import com.martin.photoAlbum.Data;
 import com.martin.photoAlbum.Session;
 import com.martin.photoAlbum.entities.Account;
+
+import dto.people.PeopleResult;
+import dto.people.PersonResult;
 
 public class AccountService extends Service {
 	private static final String VALID_EMAIl_PATTERN = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
@@ -238,5 +243,43 @@ public class AccountService extends Service {
 	public static enum EditProfileResult {
 		NOT_LOGGED_IN, INVALID_PASSWORD, INVALID_EMAIL, INVALID_NAME, OK
 		
+	}
+
+	public PeopleResult findPople(String term, int start, int limit) {
+		PeopleResult peopleResult = new PeopleResult();
+		Query q = Data.getInstance().getEntityManager().createQuery(
+				"SELECT a FROM Account a WHERE username like :term OR name like :term LIMIT :start, :limit");
+		q.setParameter("term", "%"+term+"%");
+		q.setParameter("start", start);
+		q.setParameter("limit", limit);
+
+		int count = getResultCountFor(term);
+
+		List<Account> accounts = q.getResultList();
+
+		List<PersonResult> items = new ArrayList<>(limit);
+
+		for (Account account : accounts) {
+			PersonResult personResult = new PersonResult();
+
+			personResult.setId(account.getId());
+			personResult.setName(account.getName());
+			personResult.setUsername(account.getUsername());
+
+			items.add(personResult);
+		}
+
+		peopleResult.setItems(items);
+		peopleResult.setIncompleteResults(false);
+		peopleResult.setTotalCount(count);
+		return peopleResult;
+	}
+
+	private int getResultCountFor(String term) {
+		Query q = Data.getInstance().getEntityManager().createQuery(
+				"SELECT count(a.id) FROM Account a WHERE username like :term OR name like :term");
+		q.setParameter("term", "%"+term+"%");
+
+		return (int)q.getSingleResult();
 	}
 }

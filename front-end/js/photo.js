@@ -19,8 +19,43 @@ function showPhoto(id) {
 		$("#description").html("Description: <i>"+photo.description+"</i>");
 		$("#dateAdded").html("Date Added: <i>"+photo.dateAdded+"</i>");
 		addImage(photo.id);
+		handleFaces(photo);
 	});
 }
+
+function handleFaces(photo) {
+	var faces = photo.faces;
+
+	for (var i in faces) {
+		var face = faces[i];
+
+		handleFace(face);
+	}
+}
+
+function handleFace(face) {
+	var pointA = face.pointA;
+	var pointB = face.pointB;
+
+	var top = pointA.y;
+	var left = pointA.x;
+	var height = pointB.y - pointA.y;
+	var width = pointB.x - pointA.x;
+
+	var titleHtml = "";
+
+	if (face.person) {
+		titleHtml = ' title="'+face.person.name+'"';
+	}
+
+	var faceHTML = '<div style="top:'+top+';left:'+left+
+	';height:'+height+';width:'+width+';"'+titleHTML+'/>';
+	$("#photoPlaceholder").html(faceHTML);
+}
+
+$(document).on("click", ".face", function() {
+	
+})
 
 function addImage(id) {
 	var imageHtml = "<img src='/photo/"+id+"'/>";
